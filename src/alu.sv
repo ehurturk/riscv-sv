@@ -5,7 +5,7 @@
 module alu #(
     parameter WIDTH = 32
 ) (
-    input alu_op_t op,
+    input alu_t op,
     input logic [WIDTH-1:0] opA,
     input logic [WIDTH-1:0] opB,
 

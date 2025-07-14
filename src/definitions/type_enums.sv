@@ -12,4 +12,11 @@ typedef enum logic [`ALU_OPSIZE-1:0] {
     ALU_SRA  = `ALU_OPSIZE'b0111, // shift right arithmetic
     ALU_SLT  = `ALU_OPSIZE'b1000, // set less than (signed) 
     ALU_SLTU = `ALU_OPSIZE'b1001  // set less than (unsigned)
-} alu_op_t;
+} alu_t;
+
+typedef enum logic [1:0] {
+    ALUOP_ADD   = 2'b00,  // Always ADD (Load/Store, JAL/JALR, AUIPC, LUI)
+    ALUOP_SUB   = 2'b01,  // Always SUB (Branch comparisons)
+    ALUOP_RTYPE = 2'b10,  // R-type instructions (func3 + func7)
+    ALUOP_ITYPE = 2'b11   // I-type instructions (func3 + func7)
+} aluop_t;

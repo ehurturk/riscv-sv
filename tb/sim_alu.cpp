@@ -41,10 +41,10 @@ int main(int argc, char **argv) {
   contextp->commandArgs(argc, argv);
   Valu *alu = new Valu{contextp};
 
-  // ADD: expect normal result, possibly overflow
+  // ADD
   run_test(alu, 0x7FFFFFFF, 0x01, ALU_ADD, "ADD");
 
-  // SUB: negative result, check sign + overflow
+  // SUB
   run_test(alu, 0x00000010, 0x00000020, ALU_SUB, "SUB");
 
   // AND
@@ -59,16 +59,16 @@ int main(int argc, char **argv) {
   // SLL: 0x00000001 << 4 = 0x10
   run_test(alu, 0x00000001, 0x00000004, ALU_SLL, "SLL");
 
-  // SRL: unsigned shift right
+  // SRL
   run_test(alu, 0x80000000, 0x00000004, ALU_SRL, "SRL");
 
-  // SRA: signed shift right
+  // SRA
   run_test(alu, 0xF0000000, 0x00000004, ALU_SRA, "SRA");
 
-  // SLT: signed less than
+  // SLT
   run_test(alu, 0xFFFFFFFF, 0x00000001, ALU_SLT, "SLT");
 
-  // SLTU: unsigned less than
+  // SLTU
   run_test(alu, 0x00000001, 0xFFFFFFFF, ALU_SLTU, "SLTU");
 
   delete alu;
