@@ -1,5 +1,5 @@
-// 32-bit (default) 3-input 2-bit signal input multiplexer
-module mux3 #(
+// 32-bit (default) 4-input 2-bit signal input multiplexer
+module mux4 #(
     parameter WIDTH = 32
 ) (
     input logic [WIDTH-1:0] d0,
