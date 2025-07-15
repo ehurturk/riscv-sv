@@ -9,6 +9,12 @@
 `define SH_SIGN 3'b101
 `define DF_SIGN 3'b110
 
+/*
+ * Information regarding immediate generation can be found
+ * in section 2.4, Volume I of the RISC-V ISA Manual
+ * (https://drive.google.com/file/d/1uviu1nH-tScFfgrovvFCrj7Omv8tFtkp/view)
+ */
+
 
 module immgen #(
     parameter WIDTH = 32

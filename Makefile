@@ -7,7 +7,7 @@ SRC_DIR   = src
 TB_DIR    = tb
 BUILD_DIR = obj_dir
 
-SV_SRCS   = $(addprefix $(SRC_DIR)/, immgen.sv branch_unit.sv alu.sv alu_control.sv control.sv datapath.sv regfile.sv ex.sv id.sv if.sv mem.sv mux2.sv mux4.sv top.sv wb.sv)
+SV_SRCS   = $(addprefix $(SRC_DIR)/, imem.sv dmem_bus.sv dmem_interface.sv immgen.sv branch_unit.sv alu.sv alu_control.sv control.sv datapath.sv regfile.sv ex.sv id.sv if.sv dmem.sv mux2.sv mux4.sv top.sv wb.sv)
 TB_CPP    = $(addprefix $(TB_DIR)/, sim_regfile.cpp sim_mux2.cpp sim_mux4.cpp sim_alu.cpp)
  
 TOP_MODULE = top

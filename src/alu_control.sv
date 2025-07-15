@@ -82,7 +82,7 @@ always_comb begin
         `INSTR_FUNC3_XOR:     default_func = ALU_XOR;
         `INSTR_FUNC3_OR:      default_func = ALU_OR;
         `INSTR_FUNC3_AND:     default_func = ALU_AND;
-        default:             default_func = 4'bx;
+        default:              default_func = 4'bx;
     endcase
 end
 
@@ -90,7 +90,7 @@ always_comb begin
     case (func3)
         `INSTR_FUNC3_ADD_SUB:  alt_func = ALU_SUB;
         `INSTR_FUNC3_SRL_SRA:  alt_func = ALU_SRA;
-        default:              alt_func = 4'bx;
+        default:               alt_func = 4'bx;
     endcase
 end
     

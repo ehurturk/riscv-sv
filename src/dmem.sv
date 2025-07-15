@@ -1,0 +1,47 @@
+`include "defs.svh"
+
+/*
+ * RISC-V ISA Manual, Volume I, Section 2.6:
+ *   "RV32I provides a 32-bit address space that is byte-addressed."
+ */
+
+module data_memory #(
+    parameter WIDTH = 32
+) (
+    input logic clk,
+
+    input logic mem_read,
+    input logic mem_write,
+
+    input logic [WIDTH-1-2:0] addr_in, // 30 bits (word aligned) coming from dmem bus
+    input logic [WIDTH-1:0] data_in,
+
+    /*
+     *    byteen   | load instr
+     *    =====================
+     *    0b0001   |    lb
+     *    0b0011   |    lh
+     *    0b1111   |    lw 
+     */
+    input logic [3:0] byteen, // byte enable for supporting byte, halfword load/stores
+
+
+    output logic [WIDTH-1:0] data_out
+);
+
+
+logic [WIDTH-1:0] mem [0:1023]; // 1024 word memory (4KB)
+
+assign data_out = mem[addr_in];
+
+// store into memory
+always_ff @( posedge clk ) begin
+    if (mem_write) begin 
+        if (byteen[0]) mem[addr_in][0 +: 8] <= data_in[0 +: 8];
+        if (byteen[1]) mem[addr_in][8 +: 8] <= data_in[8 +: 8];
+        if (byteen[2]) mem[addr_in][16 +: 8] <= data_in[16 +: 8];
+        if (byteen[3]) mem[addr_in][24 +: 8] <= data_in[24 +: 8];
+    end
+end
+    
+endmodule

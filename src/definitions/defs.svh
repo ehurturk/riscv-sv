@@ -1,3 +1,6 @@
+
+`define ZERO 32'b0
+
 `define ALU_OPSIZE 4
 
 // FUNC3 bits
@@ -10,6 +13,31 @@
 `define INSTR_FUNC3_SRL_SRA  3'b101 // SRL: func7[5] = 0, SRA: func7[5] = 1
 `define INSTR_FUNC3_OR   3'b110
 `define INSTR_FUNC3_AND  3'b111
+
+// B-type instructions
+`define INSTR_FUNC3_BEQ 3'b000
+`define INSTR_FUNC3_BNE 3'b001
+`define INSTR_FUNC3_BLT 3'b100
+`define INSTR_FUNC3_BGE 3'b101
+`define INSTR_FUNC3_BLTU 3'b110
+`define INSTR_FUNC3_BGEU 3'b111
+
+// I-type Load/Store instructions
+// Last 2 bits describe:
+//   00: B
+//   01: H
+//   11: W
+// MSB describes:
+//   0: Signed
+//   1: Unsigned
+`define INSTR_FUNC3_LB  3'b000
+`define INSTR_FUNC3_LH  3'b001
+`define INSTR_FUNC3_LW  3'b010
+`define INSTR_FUNC3_LBU 3'b100
+`define INSTR_FUNC3_LHU 3'b101
+`define INSTR_FUNC3_SW  3'b000
+`define INSTR_FUNC3_SH  3'b001
+`define INSTR_FUNC3_SB  3'b010
 
 // FUNC7 bits
 // R-type instructions
