@@ -18,10 +18,10 @@ ASM_DIR         = asm
 # Create directories if they don't exist
 $(shell mkdir -p $(WAVE_DIR) $(MEM_DIR))
 
-BASIC_SRCS      = mux2.sv mux4.sv mux8.sv
-CORE_SRCS       = alu.sv alu_control.sv immgen.sv branch_unit.sv regfile.sv control.sv
-MEM_SRCS        = dmem.sv dmem_bus.sv dmem_interface.sv imem.sv imem_bus.sv
-STAGE_SRCS      = if.sv id.sv ex.sv mem.sv wb.sv
+BASIC_SRCS      = modules/mux2.sv modules/mux4.sv modules/mux8.sv
+CORE_SRCS       = modules/alu.sv modules/alu_control.sv modules/immgen.sv modules/branch_unit.sv modules/regfile.sv modules/control.sv
+MEM_SRCS        = modules/dmem.sv modules/dmem_bus.sv modules/dmem_interface.sv modules/imem.sv modules/imem_bus.sv
+STAGE_SRCS      = pipelined/if.sv pipelined/id.sv pipelined/ex.sv pipelined/mem.sv pipelined/wb.sv
 TOP_SRCS        = datapath.sv top.sv
 SV_SRCS         = $(addprefix $(SRC_DIR)/, $(BASIC_SRCS) $(CORE_SRCS) $(MEM_SRCS) $(STAGE_SRCS) $(TOP_SRCS))
 
@@ -50,11 +50,11 @@ $(TOP_BIN): $(SV_SRCS)
 	@echo "Build complete: $(BUILD_DIR)/$(TOP_BIN)"
 
 # Module dependencies
-DEPS_dmem_interface = $(SRC_DIR)/dmem_interface.sv
-DEPS_dmem_bus = $(SRC_DIR)/dmem_bus.sv $(SRC_DIR)/dmem.sv
+DEPS_dmem_interface = $(SRC_DIR)/modules/dmem_interface.sv
+DEPS_dmem_bus = $(SRC_DIR)/modules/dmem_bus.sv $(SRC_DIR)/modules/dmem.sv
 DEPS_dmem = $(DEPS_dmem_bus) $(DEPS_dmem_interface)
-DEPS_data_memory = $(SRC_DIR)/dmem.sv
-DEPS_imem_bus = $(SRC_DIR)/imem_bus.sv $(SRC_DIR)/imem.sv
+DEPS_data_memory = $(SRC_DIR)/modules/dmem.sv
+DEPS_imem_bus = $(SRC_DIR)/modules/imem_bus.sv $(SRC_DIR)/modules/imem.sv
 
 # Generic rule for building and running individual module tests
 test_%: $(TB_DIR)/sim_%.cpp
