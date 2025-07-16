@@ -1,3 +1,6 @@
+`ifndef TYPE_ENUMS
+`define TYPE_ENUMS
+
 `include "defs.svh"
 
 // ALU operations 
@@ -20,3 +23,5 @@ typedef enum logic [1:0] {
     ALUOP_RTYPE = 2'b10,  // R-type instructions (func3 + func7)
     ALUOP_ITYPE = 2'b11   // I-type instructions (func3 + func7)
 } aluop_t;
+
+`endif

@@ -1,3 +1,6 @@
+`ifndef DEFS
+`define DEFS
+
 
 `define ZERO 32'b0
 
@@ -58,3 +61,5 @@
 `define OPC_UTYPE_A  7'b0010111  // auipc
 `define OPC_UTYPE_L  7'b0110111  // lui
 `define OPC_UJTYPE   7'b1101111  // jal
+
+`endif

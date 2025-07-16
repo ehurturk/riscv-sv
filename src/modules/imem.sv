@@ -1,6 +1,6 @@
 module imem #(
     parameter WIDTH = 32,
-    localparam ADDR_W_ALIGNED_BITS = WIDTH-2;
+    localparam ADDR_W_ALIGNED_BITS = WIDTH-2
 ) (
     input logic clk,
     input logic [ADDR_W_ALIGNED_BITS:0] address_in, // input address coming from the bus (word aligned)

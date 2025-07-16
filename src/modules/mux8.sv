@@ -17,14 +17,14 @@ module mux8 #(
 always_comb 
     begin
         case (signal)
-            2'b000:  out = d0;  
-            2'b001:  out = d1;  
-            2'b010:  out = d2;  
-            2'b011:  out = d3;  
-            2'b100:  out = d4;  
-            2'b101:  out = d5  
-            2'b110:  out = d6;  
-            2'b111:  out = d7;  
+            3'b000:  out = d0;  
+            3'b001:  out = d1;  
+            3'b010:  out = d2;  
+            3'b011:  out = d3;  
+            3'b100:  out = d4;  
+            3'b101:  out = d5;
+            3'b110:  out = d6;  
+            3'b111:  out = d7;  
             default: out = {WIDTH{1'bx}};
         endcase
     end

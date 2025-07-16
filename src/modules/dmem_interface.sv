@@ -72,8 +72,8 @@ end
 
 always_comb begin
     case (func3[1:0]) 
-        2'b00:   sz_ext = { 24{ ~func3[2] & ld_align_fix[7] }, ld_align_fix[7:0] }; // [l/s]b
-        2'b01:   sz_ext = { 16{ ~func3[2] & ld_align_fix[15] }, ld_align_fix[15:0] }; // [l/s]h
+        2'b00:   sz_ext = { {24{ ~func3[2] & ld_align_fix[7] }}, ld_align_fix[7:0] }; // [l/s]b
+        2'b01:   sz_ext = { {16{ ~func3[2] & ld_align_fix[15] }}, ld_align_fix[15:0] }; // [l/s]h
         2'b10:   sz_ext = ld_align_fix[31:0]; // [l/s]w - no need to extend
         default: sz_ext = { WIDTH{1'bx} };
     endcase
