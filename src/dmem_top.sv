@@ -10,14 +10,12 @@ module dmem_top #(
     output logic [WIDTH-1:0] data_out
 );
 
-    // Wires between modules
     logic [WIDTH-1:0] bus_addr;
     logic [WIDTH-1:0] bus_data_in;
     logic [3:0]       bus_byteen;
     logic             bus_we, bus_re;
-    logic [WIDTH-1:0] bus_data_out;  // <-- shared internal wire
+    logic [WIDTH-1:0] bus_data_out;
 
-    // Interface
     dmem_interface dmem_interface_inst (
         .clk(clk),
         .mem_read(mem_read),
@@ -25,7 +23,7 @@ module dmem_top #(
         .func3(func3),
         .address_in(address_in),
         .data_in(data_in),
-        .bus_data_out(bus_data_out),     // <-- here it's passed in
+        .bus_data_out(bus_data_out),
         .data_out(data_out),
         .bus_addr(bus_addr),
         .bus_data_in(bus_data_in),
@@ -34,7 +32,6 @@ module dmem_top #(
         .bus_re(bus_re)
     );
 
-    // Bus
     dmem_bus dmem_bus_inst (
         .clk(clk),
         .mem_read(bus_re),
@@ -42,7 +39,7 @@ module dmem_top #(
         .addr_in(bus_addr),
         .data_in(bus_data_in),
         .byteen(bus_byteen),
-        .data_out(bus_data_out)         // <-- feeds the same wire
+        .data_out(bus_data_out)
     );
 
 endmodule

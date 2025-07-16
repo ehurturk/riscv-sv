@@ -26,36 +26,29 @@ void clock_cycle() {
 }
 
 void store(uint32_t addr, uint32_t data, uint8_t func3) {
-  // Setup signals for write
   dut->mem_read = 0;
   dut->mem_write = 1;
   dut->func3 = func3;
   dut->address_in = addr;
   dut->data_in = data;
 
-  // Let combinational logic settle
   dut->eval();
 
-  // Clock to perform the write
   clock_cycle();
 
-  // Clear write signal
   dut->mem_write = 0;
   dut->eval();
 }
 
 uint32_t load(uint32_t addr, uint8_t func3) {
-  // Setup signals for read
   dut->mem_write = 0;
   dut->mem_read = 1;
   dut->func3 = func3;
   dut->address_in = addr;
 
-  // Let combinational logic settle and read the output
   dut->eval();
   uint32_t result = dut->data_out;
 
-  // Clear read signal (optional, but good practice)
   dut->mem_read = 0;
   dut->eval();
 
@@ -101,14 +94,12 @@ int main(int argc, char **argv) {
 
   std::cout << "\n=== dmem_top Integration Tests ===\n" << std::endl;
 
-  // === WORD STORE/LOAD ===
   std::cout << "Test 1: Word Store/Load" << std::endl;
   store(0, 0xCAFEBABE, 0b010);           // sw
   uint32_t word_result = load(0, 0b010); // lw
   print_debug("Word load", 0, 0xCAFEBABE, word_result);
   run_test("  lw at 0", word_result == 0xCAFEBABE);
 
-  // === BYTE STORES ===
   std::cout << "\nTest 2: Byte Store/Load" << std::endl;
   store(4, 0x11, 0b000); // sb
   store(5, 0x22, 0b000); // sb
@@ -134,7 +125,6 @@ int main(int argc, char **argv) {
   print_debug("Word combined", 4, 0x44332211, word_combined);
   run_test("  lw at 4", word_combined == 0x44332211);
 
-  // === SIGN EXTENSION TEST ===
   std::cout << "\nTest 3: Sign Extension" << std::endl;
   store(8, 0xFF, 0b000); // sb - store byte 0xFF
 
@@ -147,24 +137,22 @@ int main(int argc, char **argv) {
   run_test("  lb (signed -1)", signed_byte == 0xFFFFFFFF);
   run_test("  lbu (unsigned 255)", unsigned_byte == 0x000000FF);
 
-  // === HALFWORD ===
   std::cout << "\nTest 4: Halfword" << std::endl;
   store(12, 0xBEEF, 0b001); // sh
   store(14, 0xCAFE, 0b001); // sh
 
-  uint32_t signed_hw = load(12, 0b001);   // lh (signed)
-  uint32_t unsigned_hw = load(12, 0b101); // lhu (unsigned)
+  uint32_t signed_hw = load(12, 0b001);   // lh - signed
+  uint32_t unsigned_hw = load(12, 0b101); // lhu - unsigned
   uint32_t word_hw = load(12, 0b010);     // lw
 
-  print_debug("Signed halfword", 12, 0xFFFFBEEF, signed_hw);
-  print_debug("Unsigned halfword", 12, 0x0000BEEF, unsigned_hw);
+  print_debug("Signed hw", 12, 0xFFFFBEEF, signed_hw);
+  print_debug("Unsigned hw", 12, 0x0000BEEF, unsigned_hw);
   print_debug("Word", 12, 0xCAFEBEEF, word_hw);
 
   run_test("  lh (signed)", signed_hw == 0xFFFFBEEF);
   run_test("  lhu (unsigned)", unsigned_hw == 0x0000BEEF);
   run_test("  lw combined", word_hw == 0xCAFEBEEF);
 
-  // === OVERWRITE ===
   std::cout << "\nTest 5: Overwrite Bytes" << std::endl;
   store(16, 0x12345678, 0b010); // sw
   store(17, 0xAB, 0b000);       // sb at offset 1
@@ -173,13 +161,11 @@ int main(int argc, char **argv) {
   print_debug("After overwrite", 16, 0x1234AB78, overwrite_result);
   run_test("  lw after sb", overwrite_result == 0x1234AB78);
 
-  // === ADDITIONAL DEBUG TEST ===
   std::cout << "\nDebug: Simple byte test" << std::endl;
-  store(20, 0x55, 0b000);                 // Store byte
-  uint32_t simple_load = load(20, 0b100); // Load unsigned byte
+  store(20, 0x55, 0b000);                 // sb
+  uint32_t simple_load = load(20, 0b100); // lbu
   print_debug("Simple byte", 20, 0x55, simple_load);
 
-  // === SUMMARY ===
   std::cout << "\n=== Test Summary ===" << std::endl;
   int passed = 0;
   for (const auto &t : results)
