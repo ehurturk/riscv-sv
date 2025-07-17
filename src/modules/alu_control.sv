@@ -33,65 +33,62 @@
  */
 
 module alu_control (
-    input logic [2:0] func3, // instruction bits 14-12
-    input logic [6:0] func7, // instruction bits 31-25
+    input logic [2:0] func3,  // instruction bits 14-12
+    input logic [6:0] func7,  // instruction bits 31-25
     input aluop_t aluop,
 
-    output alu_t aluctr 
+    output alu_t aluctr
 );
 
-alu_t func_rtype;
-alu_t func_itype;
-alu_t default_func;
-alu_t alt_func;
+  alu_t func_rtype;
+  alu_t func_itype;
+  alu_t default_func;
+  alu_t alt_func;
 
-always_comb begin
+  always_comb begin
     case (aluop)
-        ALUOP_ADD:   aluctr = ALU_ADD;     // force ALU_ADD for add
-        // branch handling will be done in branch control unit
-        ALUOP_SUB:   aluctr = ALU_SUB;     // force ALU_SUB for subs
-        ALUOP_RTYPE: aluctr = func_rtype;  // R-type handling
-        ALUOP_ITYPE: aluctr = func_itype;  // I-type handling
-        default: aluctr = 4'bx; 
+      ALUOP_ADD:   aluctr = ALU_ADD;     // force ALU_ADD for add
+      // branch handling will be done in branch control unit
+      ALUOP_SUB:   aluctr = ALU_SUB;     // force ALU_SUB for subs
+      ALUOP_RTYPE: aluctr = func_rtype;  // R-type handling
+      ALUOP_ITYPE: aluctr = func_itype;  // I-type handling
+      default: aluctr = 4'bx;
     endcase
-end
+  end
 
-// R-type
-always_comb begin
-    if (func7[5])
-        func_rtype = alt_func;
-    else
-        func_rtype = default_func;
-end
+  // R-type
+  always_comb begin
+    if (func7[5]) func_rtype = alt_func;
+    else func_rtype = default_func;
+  end
 
-// I-type
-always_comb begin
-    if (func7[5] && func3 == `INSTR_FUNC3_SRL_SRA)
-        func_itype = alt_func;
+  // I-type
+  always_comb begin
+    if (func7[5] && func3 == `INSTR_FUNC3_SRL_SRA) func_itype = alt_func;
     else func_itype = default_func;
-end
+  end
 
-// R-type
-always_comb begin
+  // R-type
+  always_comb begin
     case (func3)
-        `INSTR_FUNC3_ADD_SUB: default_func = ALU_ADD;
-        `INSTR_FUNC3_SRL_SRA: default_func = ALU_SRL;
-        `INSTR_FUNC3_SLL:     default_func = ALU_SLL;
-        `INSTR_FUNC3_SLT:     default_func = ALU_SLT;
-        `INSTR_FUNC3_SLTU:    default_func = ALU_SLTU;
-        `INSTR_FUNC3_XOR:     default_func = ALU_XOR;
-        `INSTR_FUNC3_OR:      default_func = ALU_OR;
-        `INSTR_FUNC3_AND:     default_func = ALU_AND;
-        default:              default_func = 4'bx;
+      `INSTR_FUNC3_ADD_SUB: default_func = ALU_ADD;
+      `INSTR_FUNC3_SRL_SRA: default_func = ALU_SRL;
+      `INSTR_FUNC3_SLL:     default_func = ALU_SLL;
+      `INSTR_FUNC3_SLT:     default_func = ALU_SLT;
+      `INSTR_FUNC3_SLTU:    default_func = ALU_SLTU;
+      `INSTR_FUNC3_XOR:     default_func = ALU_XOR;
+      `INSTR_FUNC3_OR:      default_func = ALU_OR;
+      `INSTR_FUNC3_AND:     default_func = ALU_AND;
+      default:              default_func = 4'bx;
     endcase
-end
+  end
 
-always_comb begin
+  always_comb begin
     case (func3)
-        `INSTR_FUNC3_ADD_SUB:  alt_func = ALU_SUB;
-        `INSTR_FUNC3_SRL_SRA:  alt_func = ALU_SRA;
-        default:               alt_func = 4'bx;
+      `INSTR_FUNC3_ADD_SUB: alt_func = ALU_SUB;
+      `INSTR_FUNC3_SRL_SRA: alt_func = ALU_SRA;
+      default:              alt_func = 4'bx;
     endcase
-end
-    
+  end
+
 endmodule

@@ -10,14 +10,13 @@ module mux4 #(
     output logic [WIDTH-1:0] out
 );
 
-always_comb 
-    begin
-        case (signal)
-            2'd0:    out = d0;  
-            2'd1:    out = d1;  
-            2'd2:    out = d2;  
-            default: out = 'x;
-        endcase
-    end
-    
+  always_comb begin
+    case (signal)
+      2'd0:    out = d0;
+      2'd1:    out = d1;
+      2'd2:    out = d2;
+      default: out = 'x;
+    endcase
+  end
+
 endmodule
