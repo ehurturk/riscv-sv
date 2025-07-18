@@ -1,0 +1,8 @@
+`ifndef CONTROL_BITS
+`define CONTROL_BITS
+
+`define CTL_PCSEL_PCPLUS4 2'b00
+`define CTL_PCSEL_PCPLUSIMM 2'b01
+`define CTL_PCSEL_RPLUSIMM 2'b10
+
+`endif // CONTROL_BITS

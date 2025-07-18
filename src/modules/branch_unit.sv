@@ -11,26 +11,26 @@
  */
 
 module branch_unit (
-    input logic [31:0] rs1_data,  // Register source 1
-    input logic [31:0] rs2_data,  // Register source 2
-    input logic [2:0] func3,
-    input logic branch_enable,
+    input logic [31:0] i_r1,  // register src 1
+    input logic [31:0] i_r2,  // register src 2
+    input logic [2:0] i_func3,
+    input logic i_bren,
 
-    output logic branch_taken
+    output logic o_taken
 );
 
   always_comb begin
-    if (!branch_enable) begin
-      branch_taken = 1'b0;
+    if (!i_bren) begin
+      o_taken = 1'b0;
     end else begin
-      case (func3)
-        `INSTR_FUNC3_BEQ:  branch_taken = (rs1_data == rs2_data);  // BEQ
-        `INSTR_FUNC3_BNE:  branch_taken = (rs1_data != rs2_data);  // BNE
-        `INSTR_FUNC3_BLT:  branch_taken = ($signed(rs1_data) < $signed(rs2_data));  // BLT
-        `INSTR_FUNC3_BGE:  branch_taken = ($signed(rs1_data) >= $signed(rs2_data));  // BGE
-        `INSTR_FUNC3_BLTU: branch_taken = (rs1_data < rs2_data);  // BLTU
-        `INSTR_FUNC3_BGEU: branch_taken = (rs1_data >= rs2_data);  // BGEU
-        default:           branch_taken = 1'b0;
+      case (i_func3)
+        `INSTR_FUNC3_BEQ:  o_taken = (i_r1 == i_rs2);  // BEQ
+        `INSTR_FUNC3_BNE:  o_taken = (i_r1 != i_rs2);  // BNE
+        `INSTR_FUNC3_BLT:  o_taken = ($signed(i_r1) < $signed(i_rs2));  // BLT
+        `INSTR_FUNC3_BGE:  o_taken = ($signed(i_r1) >= $signed(i_rs2));  // BGE
+        `INSTR_FUNC3_BLTU: o_taken = (i_r1 < i_rs2);  // BLTU
+        `INSTR_FUNC3_BGEU: o_taken = (i_r1 >= i_rs2);  // BGEU
+        default:           o_taken = 1'b0;
       endcase
     end
   end

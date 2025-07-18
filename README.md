@@ -21,15 +21,10 @@ Aim: Implement 5-stage pipelined RSIC-V core (RV32I ISA subset) using SystemVeri
 - [ ] Hazard Unit
 
 ## TODO
-1) Write testbenches for imm generation + ALU signal generation
-2) Write DataMemory + InstructionMemory
-3) Start planning control signals + CU
-
----
-
 1) Implement CU
 2) Test CU
 3) Wire everything for a single cycle datapath
+4) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
 
 ---
 1) Test multicycle datapath

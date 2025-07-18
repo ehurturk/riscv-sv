@@ -44,9 +44,9 @@ module immgen #(
 
       end
       `OPC_ITYPE_E, `OPC_ITYPE_J, `OPC_ITYPE_L: imm_sgnl = `I_SIGN;
-      `OPC_SBTYPE: imm_sgnl = `SB_SIGN;
+      `OPC_BTYPE: imm_sgnl = `SB_SIGN;
       `OPC_STYPE: imm_sgnl = `S_SIGN;
-      `OPC_UJTYPE: imm_sgnl = `UJ_SIGN;
+      `OPC_JTYPE: imm_sgnl = `UJ_SIGN;
       `OPC_UTYPE_A, `OPC_UTYPE_L: imm_sgnl = `U_SIGN;
       default: imm_sgnl = `DF_SIGN;
     endcase

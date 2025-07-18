@@ -10,6 +10,7 @@ module alu #(
     output logic out_is_zero
 );
 
+
   always_comb begin
     if (out == 0) out_is_zero = 1'b1;
     else out_is_zero = 1'b0;

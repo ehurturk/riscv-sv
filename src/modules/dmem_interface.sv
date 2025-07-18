@@ -59,14 +59,12 @@ module dmem_interface #(
     case (func3[1:0])
       2'b00:   bus_byteen = 4'b0001 << address_in[1:0];  // b
       2'b01:   bus_byteen = 4'b0011 << address_in[1:0];  // h
-      2'b10:   bus_byteen = 4'b1111;  // w (no shift needed)
+      2'b10:   bus_byteen = 4'b1111;  // w
       default: bus_byteen = 4'b0000;
     endcase
   end
 
   always_comb begin
-    // shift the word s.t. unaligned address data becomes "aligned"
-    // useful to determine the sign bit in the sign/zero extension part
     ld_align_fix = bus_data_out >> (8 * address_in[1:0]);
   end
 
@@ -74,7 +72,7 @@ module dmem_interface #(
     case (func3[1:0])
       2'b00:   sz_ext = {{24{~func3[2] & ld_align_fix[7]}}, ld_align_fix[7:0]};  // [l/s]b
       2'b01:   sz_ext = {{16{~func3[2] & ld_align_fix[15]}}, ld_align_fix[15:0]};  // [l/s]h
-      2'b10:   sz_ext = ld_align_fix[31:0];  // [l/s]w - no need to extend
+      2'b10:   sz_ext = ld_align_fix[31:0];  // [l/s]w
       default: sz_ext = {WIDTH{1'bx}};
     endcase
   end

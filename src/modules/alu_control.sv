@@ -1,5 +1,3 @@
-`include "type_enums.sv"
-
 /*
  * A note on this design:
  *   func3, func7, and aluop are supplied from the Control Unit,

@@ -1,0 +1,27 @@
+`include "control_bits.scvh"
+
+module control (
+	input logic take_branch,
+	input logic [6:0] inst_opc,
+
+	output logic CTL_RegWrite,
+	output aluop_t CTL_AluOp,
+	output logic CTL_AluSrc,
+	output logic [1:0] CTL_PcSel,
+	output logic CTL_BranchEnable,
+	output logic CTL_MemRead,
+	output logic CTL_MemWrite,
+	output logic [2:0] CTL_MemToReg,
+);
+
+
+always_comb begin
+	case (inst_opc)
+		`OPC_BTYPE:   CTL_PcSel = take_branch ? `CTL_PCSEL_PCPLUSIMM : `CTL_PCSEL_PCPLUS4;
+		`OPC_JTYPE:   CTL_PcSel = `CTL_PCSEL_PCPLUSIMM; // JAL
+		`OPC_ITYPE_J: CTL_PcSel = `CTL_PCSEL_RPLUSIMM;  // JALR
+		default :     CTL_PcSel = `CTL_PCSEL_PCPLUS4; 
+	endcase
+end
+
+endmodule : control

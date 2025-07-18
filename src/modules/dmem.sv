@@ -28,7 +28,7 @@ module dmem #(
     output logic [WIDTH-1:0] data_out
 );
 
-  logic [WIDTH-1:0] mem[0:1023];  // 1024 word memory (4KB)
+  logic [WIDTH-1:0] mem[0:DMEM_MEM_SIZE/4 - 1];
 
   assign data_out = mem[addr_in[9:0]];
 
