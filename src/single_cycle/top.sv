@@ -3,19 +3,20 @@
 module top (
 	input logic clk,    // Clock
 
-	output logic [WIDTH-1:0] bus_data_in,
-	output logic [WIDTH-1:0] bus_data_out,
-	output logic [WIDTH-1:0] bus_addr_in,
-	output logic [3:0] bus_byteen
+	output logic [`WIDTH-1:0] bus_data_in,
+	output logic [`WIDTH-1:0] bus_data_out,
+	output logic [`WIDTH-1:0] bus_addr_in,
+	output logic [3:0] bus_byteen,
 	output logic bus_mem_read,
 	output logic bus_mem_write,
+
+	output logic [`WIDTH-1:0] pc
 );
 
-	logic [WIDTH-1:0] pc;
-	logic [WIDTH-1:0] instruction;
+	logic [`WIDTH-1:0] instruction;
 
 	riscv_sc_core #(
-		.WIDTH(WIDTH)
+		.WIDTH(`WIDTH)
 	) core(
 		.clk          (clk),
 		.pc           (pc),
@@ -33,7 +34,7 @@ module top (
 	);
 
 	dmem_bus #(
-		.WIDTH(WIDTH)
+		.WIDTH(`WIDTH)
 	) dbus(
 		.clk      (clk),
 
@@ -49,7 +50,7 @@ module top (
 	);
 
 	imem_bus #(
-		.WIDTH(WIDTH)
+		.WIDTH(`WIDTH)
 	) ibus(
 		.clk                 (clk),
 		// to read (from core)

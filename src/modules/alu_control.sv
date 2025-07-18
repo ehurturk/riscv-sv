@@ -30,11 +30,14 @@
  *        - NOTE: This check will be done in a separate branch unit
  */
 
+`include "../definitions/defs.svh"
+`include "../definitions/type_enums.svh"
+
 module alu_control (
     input logic [2:0] func3,  // instruction bits 14-12
     input logic [6:0] func7,  // instruction bits 31-25
     input aluop_t aluop,
-
+  
     output alu_t aluctr
 );
 
@@ -50,7 +53,7 @@ module alu_control (
       ALUOP_SUB:   aluctr = ALU_SUB;     // force ALU_SUB for subs
       ALUOP_RTYPE: aluctr = func_rtype;  // R-type handling
       ALUOP_ITYPE: aluctr = func_itype;  // I-type handling
-      default: aluctr = 4'bx;
+      default: aluctr = ALU_UNDEFINED;
     endcase
   end
 
@@ -77,7 +80,7 @@ module alu_control (
       `INSTR_FUNC3_XOR:     default_func = ALU_XOR;
       `INSTR_FUNC3_OR:      default_func = ALU_OR;
       `INSTR_FUNC3_AND:     default_func = ALU_AND;
-      default:              default_func = 4'bx;
+      default:              default_func = ALU_UNDEFINED;
     endcase
   end
 
@@ -85,7 +88,7 @@ module alu_control (
     case (func3)
       `INSTR_FUNC3_ADD_SUB: alt_func = ALU_SUB;
       `INSTR_FUNC3_SRL_SRA: alt_func = ALU_SRA;
-      default:              alt_func = 4'bx;
+      default:              alt_func = ALU_UNDEFINED;
     endcase
   end
 

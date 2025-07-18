@@ -1,8 +1,8 @@
 `ifndef DEFS
 `define DEFS
 
-`define TEXT_MEM_SIZE 4'h1000
-`define DMEM_MEM_SIZE 4'h1000
+`define TEXT_MEM_SIZE 16'h1000
+`define DMEM_MEM_SIZE 16'h1000
 // TODO: write MMIO_MEM_SIZE as well
 
 // Memory layout:

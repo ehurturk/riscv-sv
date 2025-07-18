@@ -1,4 +1,4 @@
-`include "type_enums.sv"
+`include "../definitions/type_enums.svh"
 
 module alu #(
     parameter WIDTH = 32

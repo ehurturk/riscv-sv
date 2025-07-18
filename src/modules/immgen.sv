@@ -1,4 +1,4 @@
-`include "defs.svh"
+`include "../definitions/defs.svh"
 
 `define R_SIGN 3'b111
 `define I_SIGN 3'b000

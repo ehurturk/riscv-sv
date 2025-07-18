@@ -1,4 +1,4 @@
-`include "defs.svh"
+`include "../definitions/defs.svh"
 
 /*
  * RISC-V ISA Manual, Volume I, Section 2.6:
@@ -28,7 +28,7 @@ module dmem #(
     output logic [WIDTH-1:0] data_out
 );
 
-  logic [WIDTH-1:0] mem[0:DMEM_MEM_SIZE/4 - 1];
+  logic [WIDTH-1:0] mem[0:`DMEM_MEM_SIZE/4 - 1];
 
   assign data_out = mem[addr_in[9:0]];
 

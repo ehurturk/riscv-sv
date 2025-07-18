@@ -1,6 +1,7 @@
 // datapath.sv - Single cycle RISC-V datapath (without control unit)
 
-`include "defs.svh"
+`include "../definitions/defs.svh"
+`include "../definitions/type_enums.svh"
 
 module datapath #(
 	parameter WIDTH=32
@@ -21,12 +22,14 @@ module datapath #(
 
 	output logic take_branch,
 	output logic [6:0] instruction_opc,
-	
+
 	output logic [WIDTH-1:0] bus_data_in,
 	output logic bus_we,
 	output logic bus_re,
 	output logic [3:0] bus_byteen,
-	output logic [WIDTH-1:0] bus_addr
+	output logic [WIDTH-1:0] bus_addr,
+
+	output logic [WIDTH-1:0] pc
 );
 
 	logic [WIDTH-1:0] next_pc;
@@ -36,6 +39,7 @@ module datapath #(
 	logic [WIDTH-1:0] r_data1;
 	logic [WIDTH-1:0] r_data2;
 	logic [WIDTH-1:0] w_data;
+
 	logic [4:0] r_reg1;
 	logic [4:0] r_reg2;
 	logic [4:0] w_reg;
@@ -52,6 +56,13 @@ module datapath #(
 
 	alu_t aluctr;
 
+	assign pc = current_pc;
+	assign instruction_opc = current_instruction[6:0];
+
+	assign r_reg1 = current_instruction[19:15];
+	assign r_reg2 = current_instruction[24:20];
+	assign w_reg = current_instruction[11:7];
+
 	// pcsrc mux
 	// 00 -> PC = PC + 4
 	// 01 -> PC = PC + IMM
@@ -61,16 +72,16 @@ module datapath #(
 	.WIDTH(WIDTH)
 	) MUXPCSrc(
 		.signal(CTL_PcSel),
-		.d0    (current_pc + FOUR),      // pc+4
+		.d0    (current_pc + `FOUR),      // pc+4
 		.d1    (current_pc + immediate), // pc+imm (JAL: PC += {imm, 1'b0})
 		.d2    ({alu_out[31:1], 1'b0}),  // JALR: PC = R[rs1] + imm
 		.d3    (`ZERO), 
-		.out   (next_pc),
+		.out   (next_pc)
 	);
 
 	// pc register
 	always_ff @(posedge clk) begin
-		current_pc <= next_pc
+		current_pc <= next_pc;
 	end
 
 
@@ -161,7 +172,6 @@ module datapath #(
 		.address_in  (alu_out),
 		.data_in     (r_data2),
 
-		// TODO
 		.bus_data_out(bus_data_out),
 		.data_out    (dmem_data_out),
 		.bus_addr    (bus_addr),

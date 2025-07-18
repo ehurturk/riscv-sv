@@ -1,4 +1,4 @@
-`include "defs.svh"
+`include "../definitions/defs.svh"
 
 /*
  * From RISC-V ISA Manual, Volume I, Section 2.5.2:
@@ -24,12 +24,12 @@ module branch_unit (
       o_taken = 1'b0;
     end else begin
       case (i_func3)
-        `INSTR_FUNC3_BEQ:  o_taken = (i_r1 == i_rs2);  // BEQ
-        `INSTR_FUNC3_BNE:  o_taken = (i_r1 != i_rs2);  // BNE
-        `INSTR_FUNC3_BLT:  o_taken = ($signed(i_r1) < $signed(i_rs2));  // BLT
-        `INSTR_FUNC3_BGE:  o_taken = ($signed(i_r1) >= $signed(i_rs2));  // BGE
-        `INSTR_FUNC3_BLTU: o_taken = (i_r1 < i_rs2);  // BLTU
-        `INSTR_FUNC3_BGEU: o_taken = (i_r1 >= i_rs2);  // BGEU
+        `INSTR_FUNC3_BEQ:  o_taken = (i_r1 == i_r2);  // BEQ
+        `INSTR_FUNC3_BNE:  o_taken = (i_r1 != i_r2);  // BNE
+        `INSTR_FUNC3_BLT:  o_taken = ($signed(i_r1) < $signed(i_r2));  // BLT
+        `INSTR_FUNC3_BGE:  o_taken = ($signed(i_r1) >= $signed(i_r2));  // BGE
+        `INSTR_FUNC3_BLTU: o_taken = (i_r1 < i_r2);  // BLTU
+        `INSTR_FUNC3_BGEU: o_taken = (i_r1 >= i_r2);  // BGEU
         default:           o_taken = 1'b0;
       endcase
     end

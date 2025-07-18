@@ -6,7 +6,6 @@ module riscv_sc_core #(
 ) (
 	input logic clk,    // Clock
 
-	input logic [WIDTH-1:0] pc,
 	input logic [WIDTH-1:0] instruction,
 
 	// data but outputs:
@@ -18,6 +17,8 @@ module riscv_sc_core #(
 	output logic [WIDTH-1:0] bus_addr_in,
     output logic [WIDTH-1:0] bus_data_in,
     output logic [3:0] bus_byteen,
+
+	output logic [WIDTH-1:0] pc
 );
 	logic take_branch;
 	logic [6:0] instruction_opc;
@@ -53,7 +54,9 @@ module riscv_sc_core #(
 		.bus_data_in     (bus_data_in),
 		.bus_re          (bus_mem_read),
 		.bus_we          (bus_mem_write),
-		.bus_addr        (bus_addr_in)
+		.bus_addr        (bus_addr_in),
+
+		.pc(pc)
 	);
 
 	// control unit

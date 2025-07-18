@@ -1,4 +1,6 @@
-`include "control_bits.scvh"
+`include "../definitions/control_bits.svh"
+`include "../definitions/defs.svh"
+`include "../definitions/type_enums.svh"
 
 module control (
 	input logic take_branch,
@@ -11,7 +13,7 @@ module control (
 	output logic CTL_BranchEnable,
 	output logic CTL_MemRead,
 	output logic CTL_MemWrite,
-	output logic [2:0] CTL_MemToReg,
+	output logic [2:0] CTL_MemToReg
 );
 
 

@@ -1,4 +1,4 @@
-`include "defs.svh"
+`include "../definitions/defs.svh"
 
 
 module dmem_bus #(
