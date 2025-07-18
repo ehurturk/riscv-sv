@@ -17,6 +17,14 @@ module control (
 );
 
 
+assign CTL_RegWrite = 1'b0;
+assign CTL_AluSrc = 1'b0;
+assign CTL_BranchEnable = 1'b0;
+assign CTL_MemRead = 1'b0;
+assign CTL_MemWrite = 1'b0;
+assign CTL_AluOp = ALUOP_ADD;
+assign CTL_MemToReg = 3'b000;
+
 always_comb begin
 	case (inst_opc)
 		`OPC_BTYPE:   CTL_PcSel = take_branch ? `CTL_PCSEL_PCPLUSIMM : `CTL_PCSEL_PCPLUS4;
