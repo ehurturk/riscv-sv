@@ -1,11 +1,16 @@
 # SystemVerilog RISC-V Core
-![](docs/memory-ports.png)
 
-Aim: Implement 5-stage pipelined RSIC-V core (RV32I ISA subset) using SystemVerilog, with these extensions:
+
+Aim: Implement 5-stage pipelined RSIC-V core (RV32I subset) using SystemVerilog, with these extensions:
 - Hazard Unit
 - Branch Prediction
 - MMIO
 - UART, SPI, I2C support
+
+## Single Cycle Implementation
+Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
+### Waveform (GTKWave)
+![](docs/singlecycle-waveform.png)
 
 ## TODO Modules
 - [x] ALU
@@ -17,11 +22,9 @@ Aim: Implement 5-stage pipelined RSIC-V core (RV32I ISA subset) using SystemVeri
 - [x] Data Memory
 - [x] Program Counter
 - [x] Datapath
-- [ ] Control Unit
+- [x] Control Unit
 - [ ] Pipelines
 - [ ] Hazard Unit
 
 ## TODO
-1) Implement CU
-2) Test CU
-4) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
+1) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
