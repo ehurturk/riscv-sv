@@ -82,4 +82,6 @@
 
 `define OPC_JTYPE 7'b1101111  // jal
 
+`define OPC_ITYPE_F 7'b0001111 // fence fence.i
+
 `endif // DEFS

@@ -1,10 +1,13 @@
 // module riscv single cycle core:
 // 	datapath + control (without data/instruction memory buses)
+`include "../definitions/type_enums.svh"
 
 module riscv_sc_core #(
 	parameter WIDTH=32
 ) (
 	input logic clk,    // Clock
+	input logic reset,
+
 
 	input logic [WIDTH-1:0] instruction,
 
@@ -36,31 +39,35 @@ module riscv_sc_core #(
 	datapath #(
 		.WIDTH(WIDTH)
 	) dp (
-		.clk             (clk),
-		.CTL_AluOp       (CTL_AluOp),
-		.CTL_PcSel       (CTL_PcSel),
-		.CTL_AluSrc      (CTL_AluSrc),
-		.CTL_MemRead     (CTL_MemRead),
-		.CTL_MemToReg    (CTL_MemToReg),
-		.CTL_MemWrite    (CTL_MemWrite),
-		.CTL_RegWrite    (CTL_RegWrite),
-		.CTL_BranchEnable(CTL_BranchEnable),
+		.clk                (clk),
+		.reset              (reset),
 
-		.take_branch     (take_branch),
-		.instruction_opc (instruction_opc),
+		.current_instruction(instruction),
 
-		.bus_data_out    (bus_data_out),
-		.bus_byteen      (bus_byteen),
-		.bus_data_in     (bus_data_in),
-		.bus_re          (bus_mem_read),
-		.bus_we          (bus_mem_write),
-		.bus_addr        (bus_addr_in),
+		.CTL_AluOp          (CTL_AluOp),
+		.CTL_PcSel          (CTL_PcSel),
+		.CTL_AluSrc         (CTL_AluSrc),
+		.CTL_MemRead        (CTL_MemRead),
+		.CTL_MemToReg       (CTL_MemToReg),
+		.CTL_MemWrite       (CTL_MemWrite),
+		.CTL_RegWrite       (CTL_RegWrite),
+		.CTL_BranchEnable   (CTL_BranchEnable),
 
-		.pc(pc)
+		.take_branch        (take_branch),
+		.instruction_opc    (instruction_opc),
+
+		.bus_data_out       (bus_data_out),
+		.bus_byteen         (bus_byteen),
+		.bus_data_in        (bus_data_in),
+		.bus_re             (bus_mem_read),
+		.bus_we             (bus_mem_write),
+		.bus_addr           (bus_addr_in),
+
+		.pc                 (pc)
 	);
 
 	// control unit
-	control cp (
+	sccontrol cp (
 		.take_branch     (take_branch),
 		.inst_opc        (instruction_opc),
 

@@ -2,6 +2,7 @@
 
 module top (
 	input logic clk,    // Clock
+	input logic reset,
 
 	output logic [`WIDTH-1:0] bus_data_in,
 	output logic [`WIDTH-1:0] bus_data_out,
@@ -19,6 +20,7 @@ module top (
 		.WIDTH(`WIDTH)
 	) core(
 		.clk          (clk),
+		.reset(reset),
 		.pc           (pc),
 		.instruction  (instruction),
 

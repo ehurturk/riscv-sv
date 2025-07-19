@@ -7,8 +7,12 @@ module datapath #(
 	parameter WIDTH=32
 )(
 	input logic clk,
+	input logic reset,
+
+	// from instruction memory bus (external)
+	input logic [WIDTH-1:0] current_instruction,
 	
-	// Control signals
+	// Control signals (external)
 	input logic CTL_RegWrite,
 	input aluop_t CTL_AluOp,
 	input logic CTL_AluSrc,
@@ -18,17 +22,20 @@ module datapath #(
 	input logic CTL_MemWrite,
 	input logic [2:0] CTL_MemToReg,
 
+	// from data memory bus (external)
 	input logic [WIDTH-1:0] bus_data_out,
 
 	output logic take_branch,
 	output logic [6:0] instruction_opc,
 
+	// to data memory:
 	output logic [WIDTH-1:0] bus_data_in,
 	output logic bus_we,
 	output logic bus_re,
 	output logic [3:0] bus_byteen,
 	output logic [WIDTH-1:0] bus_addr,
 
+	// to instruction memory:
 	output logic [WIDTH-1:0] pc
 );
 
@@ -46,8 +53,6 @@ module datapath #(
 
 	logic [WIDTH-1:0] dmem_data_out;
 
-
-	logic [WIDTH-1:0] current_instruction;
 	logic [WIDTH-1:0] immediate;
 
 	logic [WIDTH-1:0] alu_src2;
@@ -81,17 +86,13 @@ module datapath #(
 
 	// pc register
 	always_ff @(posedge clk) begin
-		current_pc <= next_pc;
+		if (reset) begin
+			current_pc <= `RESET_VECTOR;
+		end 
+		else begin
+			current_pc <= next_pc;
+		end
 	end
-
-
-	imem_bus #(
-		.WIDTH(WIDTH)	
-	) imem_bus(
-		.clk                 (clk),
-		.pc                  (current_pc),
-		.instruction_data_out(current_instruction)
-	);
 
 	mux8 #(
 		.WIDTH(WIDTH)
@@ -162,6 +163,7 @@ module datapath #(
 		.out_is_zero(alu_out_zero)
 	);
 
+	
 	dmem_interface #(
 		.WIDTH(WIDTH)
 	) dmem_int (
