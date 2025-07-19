@@ -35,7 +35,7 @@ module riscv_sc_core #(
 	logic CTL_BranchEnable;
 	logic [2:0] CTL_MemToReg;
 
-	// datapath
+	/* verilator public_module */
 	datapath #(
 		.WIDTH(WIDTH)
 	) dp (

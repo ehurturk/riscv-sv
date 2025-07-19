@@ -23,7 +23,7 @@ module dmem #(
      *    0b0011   |    lh
      *    0b1111   |    lw
      */
-    input logic [3:0] byteen,  // byte enable for supporting byte, halfword load/stores
+    input logic [3:0] byteen,
 
     output logic [WIDTH-1:0] data_out
 );
@@ -32,7 +32,6 @@ module dmem #(
 
   assign data_out = mem[addr_in[9:0]];
 
-  // store into memory
   always_ff @(posedge clk) begin
     if (mem_write) begin
       if (byteen[0]) mem[addr_in[9:0]][0+:8] <= data_in[0+:8];

@@ -27,6 +27,7 @@ module dmem_bus #(
 
   logic [WIDTH-1:0] read_data;
 
+  /* verilator public_module */
   dmem #(
       .WIDTH(32)
   ) dmem (

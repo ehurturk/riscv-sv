@@ -109,6 +109,7 @@ module datapath #(
 		.out   (w_data)
 	);
 
+	/* verilator public_module */
 	regfile #(
 		.WIDTH(WIDTH)
 	) regfile (

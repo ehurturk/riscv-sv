@@ -16,6 +16,7 @@ module top (
 
 	logic [`WIDTH-1:0] instruction;
 
+	/* verilator public_module */
 	riscv_sc_core #(
 		.WIDTH(`WIDTH)
 	) core(
@@ -35,6 +36,7 @@ module top (
 		.bus_mem_write(bus_mem_write)
 	);
 
+	/* verilator public_module */
 	dmem_bus #(
 		.WIDTH(`WIDTH)
 	) dbus(

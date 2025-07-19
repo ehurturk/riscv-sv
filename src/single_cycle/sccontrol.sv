@@ -94,7 +94,7 @@ always_comb begin
             CTL_BranchEnable = 1'b0;
             CTL_MemRead = 1'b0;
             CTL_MemWrite = 1'b0;
-            CTL_MemToReg = 3'b100;        // PC + immediate
+            CTL_MemToReg = 3'b100;        // pc + imm
         end
         
         `OPC_JTYPE: begin
