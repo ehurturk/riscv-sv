@@ -16,7 +16,7 @@ module imem #(
   initial begin
 
 `ifdef USE_ROM
-      $readmemh("mem/fib.hex", mem);
+      $readmemh(`PROGRAM_FILE, mem);
 `elsif USE_STATIC
     for (integer i = 0; i < ({16'b0,`TEXT_MEM_SIZE} >> 2); i++) begin // display first 32 mem items
         mem[i] = 32'h00000013;  // nop

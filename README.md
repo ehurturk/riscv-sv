@@ -10,8 +10,11 @@ Aim: Implement 5-stage pipelined RSIC-V core (RV32I subset) using SystemVerilog,
 ## Single Cycle Implementation
 Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
 ### Waveform (GTKWave)
-![](docs/singlecycle-waveform.png)
+[mem/fib.hex](mem/fib.hex):
+![](docs/singlecycle-waveform-fib.png)
 
+[mem/testadd.hex](mem/testadd.hex)
+![](docs/singlecycle-waveform-testadd.png)
 ## TODO Modules
 - [x] ALU
 - [x] Register file
