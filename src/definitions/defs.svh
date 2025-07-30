@@ -1,14 +1,14 @@
 `ifndef DEFS
 `define DEFS
 
-`define TEXT_MEM_SIZE 16'h1000
-`define DMEM_MEM_SIZE 16'h1000
+`define TEXT_MEM_SIZE 32'h1000
+`define DMEM_MEM_SIZE 32'h1000
 // TODO: write MMIO_MEM_SIZE as well
 
 // Memory layout:
 `define RESET_VECTOR 32'h00000000
 `define TEXT_MEM_BEGIN `RESET_VECTOR
-`define TEXT_MEM_END   `RESET_VECTOR + `TEXT_MEM_SIZE - 1
+`define TEXT_MEM_END   `TEXT_MEM_BEGIN + `TEXT_MEM_SIZE - 1
 `define DMEM_MEM_BEGIN `TEXT_MEM_END + 1
 `define DMEM_MEM_END   `DMEM_MEM_BEGIN + `DMEM_MEM_SIZE - 1
 // TODO: write MMIO_MEM_BEGIN / MMIO_MEM_END as well

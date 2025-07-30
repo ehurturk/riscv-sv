@@ -29,7 +29,7 @@ module dmem_bus #(
 
   /* verilator public_module */
   dmem #(
-      .WIDTH(32)
+      .WIDTH(WIDTH)
   ) dmem (
       .clk(clk),
       .mem_read(mem_read),
