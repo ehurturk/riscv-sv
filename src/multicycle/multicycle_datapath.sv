@@ -32,8 +32,6 @@ module multicycle_datapath #(
     
 	// to cu
     output logic [6:0] opcode,
-    output logic [2:0] funct3,
-    output logic [6:0] funct7,
 
     output logic zero,
     
@@ -61,9 +59,15 @@ module multicycle_datapath #(
 
 	logic [WIDTH-1:0] dmem_data_out;
 
+	logic [WIDTH-1:0] mem_addr_in;
+
+	logic [2:0] funct3;
+	logic [6:0] funct7;
+
     assign opcode = IR[6:0];
     assign funct3 = IR[14:12];
     assign funct7 = IR[31:25];
+	
     assign rd = IR[11:7];
     assign rs1 = IR[19:15];
     assign rs2 = IR[24:20];
@@ -72,16 +76,6 @@ module multicycle_datapath #(
     assign ir_out = IR;
     
     assign pc_enable = CTL_PCWrite | (CTL_PCWriteCond & branch_taken);
-    
-	// PC
-    always_ff @(posedge clk) begin
-        if (reset) begin
-            PC <= `RESET_VECTOR;
-        end 
-		else if (pc_enable) begin
-            PC <= PC_next;
-        end
-    end
     
 	mux4 #(
 	.WIDTH(WIDTH)
@@ -93,6 +87,16 @@ module multicycle_datapath #(
 		.d3    (`ZERO), 
 		.out   (PC_next)
 	);
+
+	// PC
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            PC <= `RESET_VECTOR;
+        end 
+		else if (pc_enable) begin
+            PC <= PC_next;
+        end
+    end
     
 	// IR
     always_ff @(posedge clk) begin
@@ -148,11 +152,17 @@ module multicycle_datapath #(
         .r_data2(reg_data2)
     );
 
+	// TODO:
+	// could this be made:
+	// ALUOut
+	// MDR
+	// immediate
+	// alu_result?
 	mux4 #(.WIDTH(WIDTH)) MUXRegWrite (
 		.signal(CTL_MemToReg), 
 		.d0(ALUOut), 
 		.d1(MDR), // for loads
-		.d2(PC),  // for JALR
+		.d2(PC+4),  // for JALR
 		.d3(ALUOut),
 
 		.out(reg_write_data)
@@ -214,6 +224,14 @@ module multicycle_datapath #(
         .o_taken(branch_taken)
     );
 
+	mux2 #(.WIDTH(WIDTH)) MUXAddrSel (
+		.signal(CTL_IorD),
+		.d0(PC),
+		.d1(ALUOut),
+		
+		.out(mem_addr_in)
+	);
+
 	dmem_interface #(
 		.WIDTH(WIDTH)
 	) dmem_int (
@@ -221,7 +239,7 @@ module multicycle_datapath #(
 		.mem_read    (CTL_MemRead),
 		.mem_write   (CTL_MemWrite),
 		.func3       (funct3),
-		.address_in  (CTL_IorD ? ALUOut : PC),
+		.address_in  (mem_addr_in),
 		.data_in     (B),
 
 		.bus_data_out(mem_read_data), // raw mem read from the mem bus

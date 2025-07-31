@@ -66,22 +66,22 @@
 
 
 // Opcode bits
-`define OPC_RTYPE 7'b0110011  // r-type
+`define OPC_RTYPE 7'b0110011    // r-type
 
-`define OPC_ITYPE 7'b0010011  // i-type
+`define OPC_ITYPE 7'b0010011    // i-type ALU
 `define OPC_ITYPE_L 7'b0000011  // loads (lb, lbu, lh, lhu, lw)
 `define OPC_ITYPE_J 7'b1100111  // jalr
 `define OPC_ITYPE_E 7'b1110011  // environment (ebreak ecall)
 
-`define OPC_STYPE 7'b0100011  // stores
+`define OPC_STYPE 7'b0100011    // stores
 
-`define OPC_BTYPE 7'b1100011  // branch
+`define OPC_BTYPE 7'b1100011    // branch
 
 `define OPC_UTYPE_A 7'b0010111  // auipc
 `define OPC_UTYPE_L 7'b0110111  // lui
 
-`define OPC_JTYPE 7'b1101111  // jal
+`define OPC_JTYPE 7'b1101111    // jal
 
-`define OPC_ITYPE_F 7'b0001111 // fence fence.i
+`define OPC_ITYPE_F 7'b0001111  // fence fence.i
 
 `endif // DEFS
