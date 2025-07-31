@@ -1,5 +1,5 @@
 `include "../definitions/defs.svh"
-`include "../single_cycle/config.svh"
+`include "../multicycle/config.svh"
 
 module imem #(
   parameter WIDTH = 32,

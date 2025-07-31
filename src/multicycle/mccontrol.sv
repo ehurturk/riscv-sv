@@ -135,19 +135,29 @@ always_comb begin : output_logic
         FETCH: begin
             CTL_IorD = 0;
             CTL_MemRead = 1;
-            CTL_ALUSrcA = 2'b00;
+            CTL_ALUSrcA = 2'b00;      // PC
             CTL_IRWrite = 1;
-            CTL_ALUSrcB = 3'b001;
-            CTL_ALUOp = ALUOP_ADD;
-            CTL_PCWrite = 1;
+            CTL_ALUSrcB = 3'b001;     // 4
+            CTL_ALUOp = ALUOP_ADD;    // Calculate PC+4
+            CTL_PCWrite = 0;          // DON'T update PC here!
             CTL_PCSrc = 2'b00;
         end
 
+
+        // DECODE: begin
+        //     CTL_ALUSrcA = 2'b00;
+        //     CTL_ALUSrcB = 3'b010;
+        //     CTL_ALUOp = ALUOP_ADD;
+        //     // TODO: precalculate the branch target - branch prediction
+        // end
+
         DECODE: begin
-            CTL_ALUSrcA = 2'b00;
-            CTL_ALUSrcB = 3'b010;
-            CTL_ALUOp = ALUOP_ADD;
-            // TODO: precalculate the branch target - branch prediction
+            CTL_ALUSrcA = 2'b00;      // PC
+            CTL_ALUSrcB = 3'b010;     // Immediate
+            CTL_ALUOp = ALUOP_ADD;    // Calculate branch target
+            // Add PC update for sequential execution
+            CTL_PCWrite = 1;          // Update PC now!
+            CTL_PCSrc = 2'b01;        // From ALUOut (which has PC+4 from FETCH)
         end
 
         MEM_ADDR_COMP: begin
@@ -237,6 +247,10 @@ always_comb begin : output_logic
         SYSTEM: begin
             // ECALL/EBREAK - NOP for now
             // In a real implementation, would trap
+        end
+
+        default: begin
+            
         end
 
     endcase

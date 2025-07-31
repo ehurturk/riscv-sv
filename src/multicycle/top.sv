@@ -3,7 +3,7 @@
 `define WIDTH 32
 
 module top (
-    input logic clock,
+    input logic clk,
     input logic reset,
 
 	// debug outs
@@ -20,7 +20,7 @@ module top (
 
 /* verilator public_module */
 riscv_mc_core core(
-	.clk(clock),
+	.clk(clk),
 	.reset(reset),
 
 	.mem_read_data(bus_data_out),
@@ -38,7 +38,7 @@ riscv_mc_core core(
 
 /* verilator public_module */
 memory_bus #(.WIDTH(`WIDTH)) memory_bus (
-	.clk(clock),
+	.clk(clk),
 	
     .mem_read(bus_mem_read),
     .mem_write(bus_mem_write),

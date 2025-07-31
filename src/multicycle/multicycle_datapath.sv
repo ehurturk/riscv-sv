@@ -162,7 +162,7 @@ module multicycle_datapath #(
 		.signal(CTL_MemToReg), 
 		.d0(ALUOut), 
 		.d1(MDR), // for loads
-		.d2(PC+4),  // for JALR
+		.d2(PC),  // for JALR
 		.d3(ALUOut),
 
 		.out(reg_write_data)
@@ -248,8 +248,8 @@ module multicycle_datapath #(
 		.bus_addr    (mem_addr),
 		.bus_data_in (mem_write_data),
 		.bus_byteen  (mem_byteen),
-		.bus_we      (mem_read_enable),
-		.bus_re      (mem_write_enable)
+		.bus_we      (mem_write_enable),
+		.bus_re      (mem_read_enable)
 	);
 
 endmodule

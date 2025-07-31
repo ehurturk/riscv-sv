@@ -27,6 +27,7 @@ logic is_mem_instr;
 assign is_mem_data = (addr_in >= `DMEM_MEM_BEGIN) && (addr_in <= `DMEM_MEM_END);
 assign is_mem_instr = (addr_in <= `TEXT_MEM_END);
 
+/* verilator public_module */
 dmem #(
     .WIDTH(WIDTH)
 ) data_memory (
@@ -40,6 +41,7 @@ dmem #(
     .data_out(dmem_out)
 );
 
+/* verilator public_module */
 imem #(
     .WIDTH(WIDTH)
 ) instruction_memory (
@@ -49,6 +51,6 @@ imem #(
     .instruction_data_out(imem_out)
 );
 
-assign mem_data_out = mem_read && is_mem_instr ? imem_out : mem_read && is_mem_data ? dmem_out : 32'bx;
+assign mem_data_out = mem_read && is_mem_instr ? imem_out : mem_read && is_mem_data ? dmem_out : 32'h0;
 
 endmodule : memory_bus
