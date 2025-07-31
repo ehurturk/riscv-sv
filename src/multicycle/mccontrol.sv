@@ -102,8 +102,8 @@ always_comb begin : state_logic
 
         EXECUTE_R: next_state = ALU_WB;
         EXECUTE_I: next_state = ALU_WB;
-        JAL:       next_state = ALU_WB; // fetch?
-        JALR:      next_state = ALU_WB; // fetch?
+        JAL:       next_state = FETCH; // fetch?
+        JALR:      next_state = FETCH; // fetch?
 
         ALU_WB:    next_state = FETCH;
 

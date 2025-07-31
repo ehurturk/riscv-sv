@@ -15,6 +15,20 @@ Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
 
 [mem/testadd.hex](mem/testadd.hex)
 ![](docs/singlecycle-waveform-testadd.png)
+
+## Multicycle Implementation
+Control unit implemented as a FSM (TODO: Diagram)
+
+### Waveform (GTKWave)
+[mem/test_rv32i.hex](mem/test_rv32i.hex)
+![](docs/multicycle-waveform-testr32i.png)
+As can be seen from the waveform, the JAL instruction (assembled `0x00C00A6F`) is located at PC `0x5C`, undergoes states `FETCH` -> `DECODE` -> `JAL` -> `FETCH` ...
+
+During the `JAL` state, `PC+4` is written to register `x20`, as can be verified from the test program [asm/test_rv32i.s](asm/test_rv32i.s).
+
+
+**Note**: `PC <= PC + 4` assignment is done at the `DECODE` state, due to branching instructions need the *unmodified* PC (i.e. *old* PC without incremented by 4).
+
 ## TODO Modules
 - [x] ALU
 - [x] Register file
