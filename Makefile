@@ -18,12 +18,26 @@ ASM_DIR         = asm
 # Create directories if they don't exist
 $(shell mkdir -p $(WAVE_DIR) $(MEM_DIR))
 
+# Common modules used by all variants
 BASIC_SRCS      = modules/mux2.sv modules/mux4.sv modules/mux8.sv
-CORE_SRCS       = modules/alu.sv modules/alu_control.sv modules/immgen.sv modules/branch_unit.sv modules/regfile.sv modules/control.sv
-MEM_SRCS        = modules/dmem.sv modules/dmem_bus.sv modules/dmem_interface.sv modules/imem.sv modules/imem_bus.sv
-STAGE_SRCS      = pipelined/if.sv pipelined/id.sv pipelined/ex.sv pipelined/mem.sv pipelined/wb.sv
-TOP_SRCS        = datapath.sv top.sv
-SV_SRCS         = $(addprefix $(SRC_DIR)/, $(BASIC_SRCS) $(CORE_SRCS) $(MEM_SRCS) $(STAGE_SRCS) $(TOP_SRCS))
+CORE_SRCS       = modules/alu.sv modules/alu_control.sv modules/immgen.sv modules/branch_unit.sv modules/regfile.sv
+MEM_SRCS        = modules/dmem.sv modules/dmem_bus.sv modules/dmem_interface.sv modules/imem.sv modules/imem_bus.sv modules/memory_bus.sv
+COMMON_SRCS     = $(addprefix $(SRC_DIR)/, $(BASIC_SRCS) $(CORE_SRCS) $(MEM_SRCS))
+
+# Single cycle specific sources
+SC_SRCS         = single_cycle/datapath.sv single_cycle/sccontrol.sv single_cycle/riscv_sc_core.sv single_cycle/top.sv
+SC_SV_SRCS      = $(COMMON_SRCS) $(addprefix $(SRC_DIR)/, $(SC_SRCS))
+
+# Multicycle specific sources  
+MC_SRCS         = multicycle/multicycle_datapath.sv multicycle/mccontrol.sv multicycle/riscv_mc_core.sv multicycle/top.sv
+MC_SV_SRCS      = $(COMMON_SRCS) $(addprefix $(SRC_DIR)/, $(MC_SRCS))
+
+# Pipelined specific sources
+PL_SRCS         = pipelined/pipelined_datapath.sv pipelined/pipelined_control.sv pipelined/riscv_pipelined_core.sv pipelined/top.sv pipelined/hazard_unit.sv
+PL_SV_SRCS      = $(COMMON_SRCS) $(addprefix $(SRC_DIR)/, $(PL_SRCS))
+
+# Legacy support - defaults to single cycle
+SV_SRCS         = $(SC_SV_SRCS)
 
 # Testbench Files
 TESTABLE_MODULES = regfile mux2 mux4 alu dmem imem
@@ -35,19 +49,63 @@ TOP_BIN         = riscv
 # Build Targets
 # ==========================================
 
-.PHONY: all clean test help waves compile
+.PHONY: all clean test help waves compile single-cycle multicycle pipelined sc mc pl all-variants print_sources print_sources_sc print_sources_mc print_sources_pl print_config check_sources
 
-all: $(TOP_BIN)
+# Default target builds single cycle
+all: single-cycle
 
-# Build the main RISC-V processor
-$(TOP_BIN): $(SV_SRCS)
-	@echo "Building RISC-V processor..."
+# ==========================================
+# Processor Variant Build Targets
+# ==========================================
+
+# Single Cycle Processor
+single-cycle sc: riscv-sc
+	@echo "Single cycle RISC-V processor built: $(BUILD_DIR)/riscv-sc"
+
+riscv-sc: $(SC_SV_SRCS)
+	@echo "Building Single Cycle RISC-V processor..."
 	@$(VERILATOR) $(VERILATOR_FLAGS) \
-		--top-module $(TOP_MODULE) \
+		--top-module top \
 		-CFLAGS "$(CXXFLAGS)" \
-		$(SV_SRCS) \
-		-o $(TOP_BIN)
-	@echo "Build complete: $(BUILD_DIR)/$(TOP_BIN)"
+		$(SC_SV_SRCS) \
+		-o riscv-sc
+	@echo "Build complete: $(BUILD_DIR)/riscv-sc"
+
+# Multicycle Processor  
+multicycle mc: riscv-mc
+	@echo "Multicycle RISC-V processor built: $(BUILD_DIR)/riscv-mc"
+
+riscv-mc: $(MC_SV_SRCS)
+	@echo "Building Multicycle RISC-V processor..."
+	@$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module top \
+		-CFLAGS "$(CXXFLAGS)" \
+		$(MC_SV_SRCS) \
+		tb/sim_mctop.cpp
+		-o riscv-mc
+	@echo "Build complete: $(BUILD_DIR)/riscv-mc"
+
+# Pipelined Processor
+pipelined pl: riscv-pl
+	@echo "Pipelined RISC-V processor built: $(BUILD_DIR)/riscv-pl"
+
+riscv-pl: $(PL_SV_SRCS)
+	@echo "Building Pipelined RISC-V processor..."
+	@$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module top \
+		-CFLAGS "$(CXXFLAGS)" \
+		$(PL_SV_SRCS) \
+		tb/sim_pipelined.cpp \
+		-o riscv-pl
+	@echo "Build complete: $(BUILD_DIR)/riscv-pl"
+
+# Build all variants
+all-variants: single-cycle multicycle pipelined
+	@echo "All RISC-V processor variants built successfully!"
+
+# Legacy target for backward compatibility
+$(TOP_BIN): riscv-sc
+	@ln -sf riscv-sc $(BUILD_DIR)/$(TOP_BIN) 2>/dev/null || true
 
 # Module dependencies
 DEPS_dmem_interface = $(SRC_DIR)/modules/dmem_interface.sv
@@ -109,7 +167,7 @@ waves: $(WAVE_DIR)/%.vcd
 clean:
 	@echo "Cleaning build artifacts..."
 	@rm -rf $(BUILD_DIR)
-	@rm -f $(TOP_BIN)
+	@rm -f $(TOP_BIN) riscv-sc riscv-mc riscv-pl
 	@rm -f *.vcd
 	@rm -rf $(WAVE_DIR)/*.vcd
 	@echo "Clean complete!"
@@ -134,30 +192,51 @@ init_dmem: $(MEM_DIR)/%.hex
 	@cp $< $(MEM_DIR)/data.hex
 
 help:
-	@echo "RISC-V Single Cycle Processor Makefile"
-	@echo "======================================"
-	@echo "Available targets:"
-	@echo "  all           - Build the complete processor (default)"
-	@echo "  test_<module> - Build and run testbench for specific module"
-	@echo "  test          - Run all available module tests"
-	@echo "  test_memory   - Run memory system tests (dmem + imem)"
-	@echo "  compile       - Compile only, don't run"
-	@echo "  clean         - Remove build artifacts"
-	@echo "  distclean     - Remove all generated files"
-	@echo "  help          - Show this help message"
+	@echo "RISC-V Processor Makefile"
+	@echo "========================="
+	@echo "Processor Variant Build Targets:"
+	@echo "  all              - Build single cycle processor (default)"
+	@echo "  single-cycle, sc - Build single cycle processor"
+	@echo "  multicycle, mc   - Build multicycle processor"
+	@echo "  pipelined, pl    - Build pipelined processor"
+	@echo "  all-variants     - Build all processor variants"
+	@echo ""
+	@echo "Testing Targets:"
+	@echo "  test_<module>    - Build and run testbench for specific module"
+	@echo "  test             - Run all available module tests"
+	@echo "  test_memory      - Run memory system tests (dmem + imem)"
+	@echo ""
+	@echo "Utility Targets:"
+	@echo "  clean            - Remove build artifacts"
+	@echo "  distclean        - Remove all generated files"
+	@echo "  compile          - Compile only, don't run"
+	@echo "  help             - Show this help message"
 	@echo ""
 	@echo "Testable modules: $(TESTABLE_MODULES)"
 	@echo ""
 	@echo "Examples:"
+	@echo "  make sc          - Build single cycle processor"
+	@echo "  make mc          - Build multicycle processor"  
+	@echo "  make pl          - Build pipelined processor"
+	@echo "  make all-variants- Build all three variants"
 	@echo "  make test_alu    - Test the ALU module"
-	@echo "  make test_dmem   - Test the dmem module"
-	@echo "  make test_imem   - Test the imem module"
-	@echo "  make test        - Run all tests"
-	@echo "  make clean all   - Clean rebuild"
+	@echo "  make clean mc    - Clean rebuild multicycle"
 
 print_sources:
-	@echo "SystemVerilog sources:"
+	@echo "SystemVerilog sources (legacy/single-cycle):"
 	@for src in $(SV_SRCS); do echo "  $$src"; done
+
+print_sources_sc:
+	@echo "Single Cycle SystemVerilog sources:"
+	@for src in $(SC_SV_SRCS); do echo "  $$src"; done
+
+print_sources_mc:
+	@echo "Multicycle SystemVerilog sources:"
+	@for src in $(MC_SV_SRCS); do echo "  $$src"; done
+
+print_sources_pl:
+	@echo "Pipelined SystemVerilog sources:"
+	@for src in $(PL_SV_SRCS); do echo "  $$src"; done
 
 print_config:
 	@echo "Build Configuration:"
