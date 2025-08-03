@@ -9,16 +9,19 @@ module riscv_pipelined_core #(
     input logic i_clk,
     input logic i_reset,
 
-    // mem int
-    input logic [WIDTH-1:0] i_mem_read_data,
-    output logic [WIDTH-1:0] o_mem_addr,
-    output logic [WIDTH-1:0] o_mem_write_data,
-    output logic [3:0] o_mem_byteen,
-    output logic o_mem_write_en,
-    output logic o_mem_read_en,
-
-    // to debug
+    // Instruction memory interface
+    input logic [WIDTH-1:0] i_instruction,
     output logic [WIDTH-1:0] o_pc_if,
+
+    // Data memory interface
+    input logic [WIDTH-1:0] i_dmem_read_data,
+    output logic [WIDTH-1:0] o_dmem_addr,
+    output logic [WIDTH-1:0] o_dmem_write_data,
+    output logic [3:0] o_dmem_byteen,
+    output logic o_dmem_write_en,
+    output logic o_dmem_read_en,
+
+    // Pipeline debug outputs
     output logic [WIDTH-1:0] o_pc_id,
     output logic [WIDTH-1:0] o_pc_ex,
     output logic [WIDTH-1:0] o_pc_mem,
@@ -47,8 +50,8 @@ module riscv_pipelined_core #(
     logic branch_taken, jump_taken;
     
     logic hazard_stall, hazard_flush;
-    
-    hazard_unit hazard_unit_inst (
+
+    hazard_detection_unit hdu (
         .i_clk(i_clk),
         .i_reset(i_reset),
         .i_id_rs1(5'b0),       // TODO: connect actual rs1 from ID stage
@@ -84,13 +87,17 @@ module riscv_pipelined_core #(
         .i_CTL_wb_reg_write(CTL_wb_reg_write),
         .i_CTL_wb_reg_write_src(CTL_wb_reg_write_src),
         
-        // Memory interface
-        .o_mem_addr(o_mem_addr),
-        .o_mem_write_data(o_mem_write_data),
-        .o_mem_byteen(o_mem_byteen),
-        .o_mem_write_enable(o_mem_write_en),
-        .o_mem_read_enable(o_mem_read_en),
-        .i_mem_read_data(i_mem_read_data),
+        // Instruction memory interface
+        .i_instruction(i_instruction),
+        .o_pc_if(o_pc_if),
+
+        // Data memory interface
+        .o_dmem_addr(o_dmem_addr),
+        .o_dmem_write_data(o_dmem_write_data),
+        .o_dmem_byteen(o_dmem_byteen),
+        .o_dmem_write_enable(o_dmem_write_en),
+        .o_dmem_read_enable(o_dmem_read_en),
+        .i_dmem_read_data(i_dmem_read_data),
         
         // Control feedback
         .o_if_opcode(if_opcode),
@@ -103,8 +110,7 @@ module riscv_pipelined_core #(
         .o_branch_taken(branch_taken),
         .o_jump_taken(jump_taken),
         
-        // Debug outputs
-        .o_pc_if(o_pc_if),
+        // Debug outputs (excluding o_pc_if which is already connected above)
         .o_pc_id(o_pc_id),
         .o_pc_ex(o_pc_ex),
         .o_pc_mem(o_pc_mem),

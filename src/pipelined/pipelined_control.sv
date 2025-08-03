@@ -233,10 +233,6 @@ module pipelined_control (
             mem_wb_reg_write_src <= ex_mem_wb_reg_write_src;
         end
     end
-
-    // ================================
-    // OUTPUT ASSIGNMENTS
-    // ================================
     
     // IF stage outputs
     assign o_CTL_if_pc_sel = if_pc_sel_int;

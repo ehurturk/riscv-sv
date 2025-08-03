@@ -26,13 +26,17 @@ module pipelined_datapath #(
     input logic i_CTL_wb_reg_write,
     input logic [2:0] i_CTL_wb_reg_write_src,
     
-    // mem interface
-    output logic [WIDTH-1:0] o_mem_addr,
-    output logic [WIDTH-1:0] o_mem_write_data,
-    output logic [3:0] o_mem_byteen,
-    output logic o_mem_write_enable,
-    output logic o_mem_read_enable,
-    input logic [WIDTH-1:0] i_mem_read_data,
+    // Instruction memory interface
+    input logic [WIDTH-1:0] i_instruction,
+    output logic [WIDTH-1:0] o_pc_if,
+    
+    // Data memory interface
+    output logic [WIDTH-1:0] o_dmem_addr,
+    output logic [WIDTH-1:0] o_dmem_write_data,
+    output logic [3:0] o_dmem_byteen,
+    output logic o_dmem_write_enable,
+    output logic o_dmem_read_enable,
+    input logic [WIDTH-1:0] i_dmem_read_data,
     
     // to CU
     output logic [6:0] o_if_opcode,
@@ -45,7 +49,6 @@ module pipelined_datapath #(
     output logic o_jump_taken,
     
     // debug
-    output logic [WIDTH-1:0] o_pc_if,
     output logic [WIDTH-1:0] o_pc_id,
     output logic [WIDTH-1:0] o_pc_ex,
     output logic [WIDTH-1:0] o_pc_mem,
@@ -80,7 +83,6 @@ module pipelined_datapath #(
     
 
     logic [WIDTH-1:0] pc_current, pc_next, pc_plus4;
-    logic [WIDTH-1:0] instruction_fetched;
     logic [WIDTH-1:0] reg_data1, reg_data2, reg_write_data;
     logic [WIDTH-1:0] immediate;
     logic [WIDTH-1:0] alu_srcA, alu_srcB, alu_result;
@@ -104,13 +106,13 @@ module pipelined_datapath #(
     assign o_pc_ex = idex_pc;
     assign o_pc_mem = exmem_pc;
     assign o_pc_wb = memwb_pc;
-    assign o_instruction_if = instruction_fetched;
+    assign o_instruction_if = i_instruction;
     assign o_instruction_id = ifid_instruction;
     assign o_instruction_ex = idex_instruction;
     assign o_instruction_mem = exmem_instruction;
     assign o_instruction_wb = memwb_instruction;
     
-    assign o_if_opcode = instruction_fetched[6:0];
+    assign o_if_opcode = i_instruction[6:0];
     assign o_id_opcode = ifid_instruction[6:0];
     assign o_ex_opcode = idex_instruction[6:0];
     assign o_mem_opcode = exmem_instruction[6:0];
@@ -143,16 +145,14 @@ module pipelined_datapath #(
         end
     end
     
-    assign instruction_fetched = i_mem_read_data;
-    
-    
+    // IF/ID pipeline register
     always_ff @(posedge i_clk) begin
         if (i_reset) begin
             ifid_pc <= `ZERO;
             ifid_instruction <= 32'h00000013; // nop
         end else begin
             ifid_pc <= pc_current;
-            ifid_instruction <= instruction_fetched;
+            ifid_instruction <= i_instruction; // instruction from imem_bus
         end
     end
     
@@ -282,17 +282,8 @@ module pipelined_datapath #(
     // MEM PHASE
     // ================================
     
-    // Memory interface signals
-    logic [WIDTH-1:0] dmem_addr, imem_addr;
-    logic [WIDTH-1:0] dmem_write_data;
+    // Data memory interface only
     logic [WIDTH-1:0] dmem_data_out;
-    logic [3:0] dmem_byteen;
-    logic dmem_write_enable, dmem_read_enable;
-    logic imem_read_enable;
-    
-    // Instruction fetch always reads from PC
-    assign imem_addr = pc_current;
-    assign imem_read_enable = 1'b1; // Always fetching instructions
     
     dmem_interface #(
         .WIDTH(WIDTH)
@@ -303,20 +294,15 @@ module pipelined_datapath #(
         .func3(exmem_funct3),
         .address_in(exmem_alu_result),
         .data_in(exmem_reg_data2),
-        .bus_data_out(i_mem_read_data),
+        .bus_data_out(i_dmem_read_data),
         .data_out(dmem_data_out),
-        .bus_addr(dmem_addr),
-        .bus_data_in(dmem_write_data),
-        .bus_byteen(dmem_byteen),
-        .bus_we(dmem_write_enable),
-        .bus_re(dmem_read_enable)
+        .bus_addr(o_dmem_addr),
+        .bus_data_in(o_dmem_write_data),
+        .bus_byteen(o_dmem_byteen),
+        .bus_we(o_dmem_write_enable),
+        .bus_re(o_dmem_read_enable)
     );
     
-    assign o_mem_addr = (dmem_read_enable || dmem_write_enable) ? dmem_addr : imem_addr;
-    assign o_mem_write_data = dmem_write_data;
-    assign o_mem_byteen = (dmem_read_enable || dmem_write_enable) ? dmem_byteen : 4'hF;
-    assign o_mem_write_enable = dmem_write_enable;
-    assign o_mem_read_enable = dmem_read_enable || imem_read_enable;
     
     always_ff @(posedge i_clk) begin
         if (i_reset) begin

@@ -3,7 +3,7 @@
 _start:
 
     # Set up a base memory address using LUI + ADDI
-    lui x1, 0x10000         # x1 = 0x10000000
+    lui x1, 0x0001         # x1 = 0x10000000
     addi x1, x1, 0          # x1 = 0x10000000
 
     # AUIPC test
@@ -58,7 +58,3 @@ label2:
     # JALR back to x2 (return to auipc point + offset)
     addi x22, x2, 16
     jalr x0, 0(x22)         # PC = x22 (jump to PC+16)
-
-    # Endless loop (optional)
-end: 
-    jal x0, end

@@ -6,13 +6,13 @@ module top (
     input logic clk,
     input logic reset,
 
-    // Debug outputs
-    output logic [`WIDTH-1:0] o_bus_data_in,
-    output logic [`WIDTH-1:0] o_bus_data_out,
-    output logic [`WIDTH-1:0] o_bus_addr_in,
-    output logic [3:0] o_bus_byteen,
-    output logic o_bus_mem_read,
-    output logic o_bus_mem_write,
+    // Data bus debug outputs  
+    output logic [`WIDTH-1:0] bus_data_in,
+    output logic [`WIDTH-1:0] bus_data_out,
+    output logic [`WIDTH-1:0] bus_addr_in,
+    output logic [3:0] bus_byteen,
+    output logic bus_mem_read,
+    output logic bus_mem_write,
 
     // pipeline stage pcs for debugging
     output logic [`WIDTH-1:0] o_pc_if,
@@ -29,21 +29,27 @@ module top (
     output logic [`WIDTH-1:0] o_instruction_wb
 );
 
+    logic [`WIDTH-1:0] instruction_fetched;
+    logic [`WIDTH-1:0] pc_if;
+
     /* verilator public_module */
     riscv_pipelined_core core(
         .i_clk(clk),
         .i_reset(reset),
 
-        .i_mem_read_data(o_bus_data_out),
+        // Instruction memory interface
+        .i_instruction(instruction_fetched),
+        .o_pc_if(pc_if),
 
-        .o_mem_addr(o_bus_addr_in),
-        .o_mem_write_data(o_bus_data_in),
-        .o_mem_byteen(o_bus_byteen),
-        .o_mem_write_en(o_bus_mem_write),
-        .o_mem_read_en(o_bus_mem_read),
+        // Data memory interface  
+        .i_dmem_read_data(bus_data_out),
+        .o_dmem_addr(bus_addr_in),
+        .o_dmem_write_data(bus_data_in),
+        .o_dmem_byteen(bus_byteen),
+        .o_dmem_write_en(bus_mem_write),
+        .o_dmem_read_en(bus_mem_read),
         
-        // debugs
-        .o_pc_if(o_pc_if),
+        // Pipeline debug outputs
         .o_pc_id(o_pc_id),
         .o_pc_ex(o_pc_ex),
         .o_pc_mem(o_pc_mem),
@@ -55,19 +61,33 @@ module top (
         .o_instruction_wb(o_instruction_wb)
     );
 
+    // Assign PC IF for debug output
+    assign o_pc_if = pc_if;
+
     /* verilator public_module */
-    memory_bus #(.WIDTH(`WIDTH)) memory_bus (
+    dmem_bus #(.WIDTH(`WIDTH)) dbus(
         .clk(clk),
 
-        .mem_read(o_bus_mem_read),
-        .mem_write(o_bus_mem_write),
+        // from core
+        .data_in(bus_data_in),
+        .mem_read(bus_mem_read),
+        .mem_write(bus_mem_write),
+        .addr_in(bus_addr_in),
+        .byteen(bus_byteen),
 
-        .addr_in(o_bus_addr_in),
-        .data_in(o_bus_data_in),
+        // to core
+        .data_out(bus_data_out)
+    );
 
-        .byteen(o_bus_byteen),
-
-        .mem_data_out(o_bus_data_out)
+    /* verilator public_module */
+    imem_bus #(.WIDTH(`WIDTH)) ibus(
+        .clk(clk),
+        
+        // from core
+        .pc(pc_if),
+        
+        // to core
+        .instruction_data_out(instruction_fetched)
     );
 
 endmodule

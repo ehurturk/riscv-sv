@@ -1,5 +1,5 @@
 
-module hazard_unit (
+module hazard_detection_unit (
     input logic i_clk,
     input logic i_reset,
     
@@ -11,8 +11,8 @@ module hazard_unit (
     
     // Instruction types
     input logic i_ex_mem_read,            // Load instruction in EX stage
-    input logic i_ex_reg_write,           // Register write in EX stage
-    input logic i_mem_reg_write,          // Register write in MEM stage
+    // input logic i_ex_reg_write,           // Register write in EX stage
+    // input logic i_mem_reg_write,          // Register write in MEM stage
     
     // Branch/jump detection
     input logic i_branch_taken,           // Branch taken signal
@@ -23,8 +23,6 @@ module hazard_unit (
     output logic o_flush                  // Flush pipeline stages
 );
 
-    // For now, just stub out the hazard unit
-    // In a real implementation, this would detect:
     // 1. Load-use data hazards
     // 2. Control hazards (branches/jumps)
     // 3. Structural hazards
@@ -32,20 +30,18 @@ module hazard_unit (
     always_comb begin
         o_stall = 1'b0;
         o_flush = 1'b0;
-        
-        // TODO: Implement proper hazard detection logic
-        
-        // Stub: Flush on branches and jumps to handle control hazards
+
+        // control hazards 
         if (i_branch_taken || i_jump_taken) begin
             o_flush = 1'b1;
         end
         
-        // TODO: Add load-use hazard detection
-        // if (i_ex_mem_read && 
-        //     ((i_ex_rd == i_id_rs1) || (i_ex_rd == i_id_rs2)) &&
-        //     (i_ex_rd != 5'b0)) begin
-        //     o_stall = 1'b1;
-        // end
+        // load-use hazards
+        else if (i_ex_mem_read && 
+            ((i_ex_rd == i_id_rs1) || (i_ex_rd == i_id_rs2)) &&
+            (i_ex_rd != 5'b0)) begin
+            o_stall = 1'b1;
+        end
     end
 
 endmodule

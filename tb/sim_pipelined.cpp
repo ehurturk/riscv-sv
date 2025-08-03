@@ -57,10 +57,10 @@ int main(int argc, char **argv) {
     tfp->dump(sim_time++);
 
     // Check for memory writes (from MEM stage)
-    if (top->o_bus_mem_write && top->o_bus_byteen == 0xF) {
-      memory_writes[top->o_bus_addr_in] = top->o_bus_data_in;
+    if (top->bus_mem_write && top->bus_byteen == 0xF) {
+      memory_writes[top->bus_addr_in] = top->bus_data_in;
       std::cout << "MEM[0x" << std::hex << std::setfill('0') << std::setw(8)
-                << top->o_bus_addr_in << "] = " << std::dec << top->o_bus_data_in
+                << top->bus_addr_in << "] = " << std::dec << top->bus_data_in
                 << std::endl;
     }
 
