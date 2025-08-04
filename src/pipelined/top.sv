@@ -1,12 +1,9 @@
-// Top level module for 5-stage pipelined RISC-V core
-
 `define WIDTH 32
 
 module top (
     input logic clk,
     input logic reset,
 
-    // Data bus debug outputs  
     output logic [`WIDTH-1:0] bus_data_in,
     output logic [`WIDTH-1:0] bus_data_out,
     output logic [`WIDTH-1:0] bus_addr_in,
@@ -14,14 +11,14 @@ module top (
     output logic bus_mem_read,
     output logic bus_mem_write,
 
-    // pipeline stage pcs for debugging
+    // pipeline stage pcs
     output logic [`WIDTH-1:0] o_pc_if,
     output logic [`WIDTH-1:0] o_pc_id,
     output logic [`WIDTH-1:0] o_pc_ex,
     output logic [`WIDTH-1:0] o_pc_mem,
     output logic [`WIDTH-1:0] o_pc_wb,
     
-    // pipeline stage instructions for debugging
+    // pipeline stage instrs
     output logic [`WIDTH-1:0] o_instruction_if,
     output logic [`WIDTH-1:0] o_instruction_id,
     output logic [`WIDTH-1:0] o_instruction_ex,
@@ -37,11 +34,11 @@ module top (
         .i_clk(clk),
         .i_reset(reset),
 
-        // Instruction memory interface
+        // instruction memory interface
         .i_instruction(instruction_fetched),
         .o_pc_if(pc_if),
 
-        // Data memory interface  
+        // data memory interface  
         .i_dmem_read_data(bus_data_out),
         .o_dmem_addr(bus_addr_in),
         .o_dmem_write_data(bus_data_in),
@@ -49,7 +46,7 @@ module top (
         .o_dmem_write_en(bus_mem_write),
         .o_dmem_read_en(bus_mem_read),
         
-        // Pipeline debug outputs
+        // debug outs
         .o_pc_id(o_pc_id),
         .o_pc_ex(o_pc_ex),
         .o_pc_mem(o_pc_mem),

@@ -21,12 +21,7 @@ module hazard_detection_unit (
     // Hazard outputs
     output logic o_stall,                 // Stall pipeline
     output logic o_flush                  // Flush pipeline stages
-);
-
-    // 1. Load-use data hazards
-    // 2. Control hazards (branches/jumps)
-    // 3. Structural hazards
-    
+);    
     always_comb begin
         o_stall = 1'b0;
         o_flush = 1'b0;

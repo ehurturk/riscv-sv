@@ -1,12 +1,5 @@
 # SystemVerilog RISC-V Core
 
-
-Aim: Implement 5-stage pipelined RSIC-V core (RV32I subset) using SystemVerilog, with these extensions:
-- Hazard Unit
-- Branch Prediction
-- MMIO
-- UART, SPI, I2C support
-
 ## Single Cycle Implementation
 Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
 ### Waveform (GTKWave)
@@ -26,22 +19,29 @@ As can be seen from the waveform, the JAL instruction (assembled `0x00C00A6F`) i
 
 During the `JAL` state, `PC+4` is written to register `x20`, as can be verified from the test program [asm/test_rv32i.s](asm/test_rv32i.s).
 
-
 **Note**: `PC <= PC + 4` assignment is done at the `DECODE` state, due to branching instructions need the *unmodified* PC (i.e. *old* PC without incremented by 4).
 
-## TODO Modules
-- [x] ALU
-- [x] Register file
-- [x] Branch Unit
-- [x] Immediate Generator
-- [x] ALU Control
-- [x] Instruction Memory
-- [x] Data Memory
-- [x] Program Counter
-- [x] Datapath
-- [x] Control Unit
-- [ ] Pipelines
-- [ ] Hazard Unit
+## Pipeline Hazard Detection Logic
+
+There are 3 types of hazards in pipelined designs:
+- Structural Hazards (hardware resource conflicts)
+- Data Hazards (execution has data dependency of previous results in the pipeline)
+  - Write after write (WAW)
+  - Write after read (WAR)
+  - Read after write (RAW)
+- Control Hazards (due to jump/branch instruction target prediction)
+
+### Mitigating Hazards
+#### Structural Hazards
+Structural hazards are already mitigated by the design of RISC-V: It has two separate memory for text and data, dual port register file and exclusive ALU.
+#### Data Hazards
+**Data Forwarding**: An example of a RAW hazard is:
+```s
+lui x1, 0x0001
+addi x1, x1, 0
+```
+In `addi`, it should read `x1` that is written by `lui`, but due to pipelining it reads the **old** value:
+![raw_hazard](docs/raw_hazard.png)
 
 ## TODO
 1) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
