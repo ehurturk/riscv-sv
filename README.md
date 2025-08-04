@@ -41,7 +41,7 @@ lui x1, 0x0001
 addi x1, x1, 0
 ```
 In `addi`, it should read `x1` that is written by `lui`, but due to pipelining it reads the **old** value:
-![raw_hazard](docs/raw_hazard.png)
+![raw_hazard](docs/raw_hazard.jpg)
 
 ## TODO
 1) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
