@@ -1,26 +1,5 @@
 # SystemVerilog RISC-V Core
 
-## Single Cycle Implementation
-Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
-### Waveform (GTKWave)
-[mem/fib.hex](mem/fib.hex):
-![](docs/singlecycle-waveform-fib.png)
-
-[mem/testadd.hex](mem/testadd.hex)
-![](docs/singlecycle-waveform-testadd.png)
-
-## Multicycle Implementation
-Control unit implemented as a FSM (TODO: Diagram)
-
-### Waveform (GTKWave)
-[mem/test_rv32i.hex](mem/test_rv32i.hex)
-![](docs/multicycle-waveform-testr32i.png)
-As can be seen from the waveform, the JAL instruction (assembled `0x00C00A6F`) is located at PC `0x5C`, undergoes states `FETCH` -> `DECODE` -> `JAL` -> `FETCH` ...
-
-During the `JAL` state, `PC+4` is written to register `x20`, as can be verified from the test program [asm/test_rv32i.s](asm/test_rv32i.s).
-
-**Note**: `PC <= PC + 4` assignment is done at the `DECODE` state, due to branching instructions need the *unmodified* PC (i.e. *old* PC without incremented by 4).
-
 ## Pipelined Implementation
 A somewhat simplified pipelined datapath without the control signals can be shown as:
 ![pipelined](docs/riscv-pipeline_design.svg)
@@ -74,8 +53,45 @@ Control hazards can be mitigated by predicting whether the branch will be taken 
 
 In the next cycle, either `PC+4` or `target` address will be in the fetch stage. In the `EXECUTE` stage of the branch, if the prediction is found wrong, then we have to **flush** the pipeline, fetching the correct instruction from the correct target.
 
+Here is a diagram view:
+
+![control](docs/riscv-hazards_control.svg)
+
+As can be seen from the diagram, the two instructions `addi` and `or` have been flushed, essentially adding 2 `NOP` instructions to the pipeline. This is called the branch penalty, and has the most effect on the CPI of the processor.
+
 ##### Static Prediction
 We can statically predict the branch to be taken for *all* jump and unconditional branch operations, and branch to be not taken for *all* conditional branch instructions.
+
+## Single Cycle Implementation
+Control signals can be found in [CONTROL-SC.md](docs/CONTROL-SC.md).
+
+<details>
+
+<summary> Waveform (GTKWave) </summary>
+
+![mem](docs/singlecycle-waveform-fib.png)
+
+</details>
+
+## Multicycle Implementation
+Control unit implemented as a FSM (TODO: Diagram)
+
+
+<details>
+
+<summary> Waveform (GTKWave) for mem/test_rv32i.hex </summary>
+
+![mem](docs/multicycle-waveform-testr32i.png)
+
+</details>
+
+##### Notes
+As can be seen from the waveform, the JAL instruction (assembled `0x00C00A6F`) is located at PC `0x5C`, undergoes states `FETCH` -> `DECODE` -> `JAL` -> `FETCH` ...
+
+During the `JAL` state, `PC+4` is written to register `x20`, as can be verified from the test program [asm/test_rv32i.s](asm/test_rv32i.s).
+
+**Note**: `PC <= PC + 4` assignment is done at the `DECODE` state, due to branching instructions need the *unmodified* PC (i.e. *old* PC without incremented by 4).
+
 
 ## TODO
 1) Add checks for `TEXT_MEM_BEGIN` and `DATA_MEM_BEGIN` memory ranges in `dmem` and `imem`.
