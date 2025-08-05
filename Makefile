@@ -33,7 +33,7 @@ MC_SRCS         = multicycle/multicycle_datapath.sv multicycle/mccontrol.sv mult
 MC_SV_SRCS      = $(COMMON_SRCS) $(addprefix $(SRC_DIR)/, $(MC_SRCS))
 
 # Pipelined specific sources
-PL_SRCS         = pipelined/pipelined_datapath.sv pipelined/pipelined_control.sv pipelined/riscv_pipelined_core.sv pipelined/top.sv pipelined/hazard_unit.sv
+PL_SRCS         = pipelined/pipelined_datapath.sv pipelined/pipelined_control.sv pipelined/riscv_pipelined_core.sv pipelined/top.sv modules/hazard_detection_unit.sv modules/forwarding_unit.sv
 PL_SV_SRCS      = $(COMMON_SRCS) $(addprefix $(SRC_DIR)/, $(PL_SRCS))
 
 # Legacy support - defaults to single cycle

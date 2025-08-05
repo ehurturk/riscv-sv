@@ -4,7 +4,7 @@ _start:
 
     # Set up a base memory address using LUI + ADDI
     lui x1, 0x0001         # x1 = 0x10000000
-    addi x1, x1, 0          # x1 = 0x10000000
+    addi x1, x1, 4          # x1 = 0x10000000
 
     # AUIPC test
     auipc x2, 0             # x2 = current PC (used for checking)
