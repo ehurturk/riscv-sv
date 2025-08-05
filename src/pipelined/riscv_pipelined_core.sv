@@ -59,8 +59,6 @@ module riscv_pipelined_core #(
         .i_ex_rd(5'b0),        // TODO: connect actual rd from EX stage
         .i_mem_rd(5'b0),       // TODO: connect actual rd from MEM stage
         .i_ex_mem_read(CTL_mem_read),
-        .i_ex_reg_write(1'b0), // TODO: connect actual reg_write from EX stage
-        .i_mem_reg_write(1'b0),// TODO: connect actual reg_write from MEM stage
         .i_branch_taken(branch_taken),
         .i_jump_taken(jump_taken),
         .o_stall(hazard_stall),

@@ -9,8 +9,8 @@ module forward_unit (
     input logic i_ex_mem_reg_write,
     input logic [4:0] i_mem_wb_rd,
     input logic i_mem_wb_reg_write,
-    input logic [31:0] i_ex_mem_alu_res,
-    input logic [31:0] i_mem_wb_write_data,
+    // input logic [31:0] i_ex_mem_alu_res,
+    // input logic [31:0] i_mem_wb_write_data,
 
     output logic [1:0] o_forward_a,
     output logic [1:0] o_forward_b

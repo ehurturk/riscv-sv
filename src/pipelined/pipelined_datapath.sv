@@ -124,7 +124,14 @@ module pipelined_datapath #(
     // ================================
     // IF PHASE
     // ================================
-    
+
+    /*
+     * NOTE: use pc_plus4 instead of ALU result since
+     *       this is a pipelined design, therefore ALU
+     *       is busy with other instructions. To *ensure*
+     *       PC is updated correctly in the FETCH stage,
+     *       we have to have a dedicated adder for the PC.
+     */ 
     assign pc_plus4 = pc_current + 32'd4;
     
     mux4 #(.WIDTH(WIDTH)) MUXPCSrc (
@@ -293,11 +300,12 @@ module pipelined_datapath #(
         .mem_write(i_CTL_mem_write),
         .func3(exmem_funct3),
         .address_in(exmem_alu_result),
-        .data_in(exmem_reg_data2),
-        .bus_data_out(i_dmem_read_data),
-        .data_out(dmem_data_out),
+        .data_in(exmem_reg_data2), // raw write data to bus
+        .bus_data_out(i_dmem_read_data), // raw data from bus
+
+        .data_out(dmem_data_out), // processed data from bus
         .bus_addr(o_dmem_addr),
-        .bus_data_in(o_dmem_write_data),
+        .bus_data_in(o_dmem_write_data), // processed write data to bus
         .bus_byteen(o_dmem_byteen),
         .bus_we(o_dmem_write_enable),
         .bus_re(o_dmem_read_enable)
@@ -335,7 +343,7 @@ module pipelined_datapath #(
         .d0(memwb_alu_result),
         .d1(memwb_mem_data),
         .d2(pc_plus4_wb),         // for jal/jalr
-        .d3(lui_immediate),
+        .d3(lui_immediate),       // lui immediate TODO
         .d4(auipc_result),        // PC+Imm for auipc
         .d5(memwb_alu_result),
         .d6(memwb_alu_result),
