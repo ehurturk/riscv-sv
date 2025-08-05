@@ -7,9 +7,7 @@
 
 ## Clean up
 - Clean up code
-- Draw a detailed diagram
 - Organize memory into a big MMU
-- Create interfaces/buses
 - If needed, create FU, DU, EU, MEMU, WBU for pipelines
 
 ## Interrupts & remaining instructions

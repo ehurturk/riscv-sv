@@ -25,12 +25,15 @@ module pipelined_datapath #(
     
     input logic i_CTL_wb_reg_write,
     input logic [2:0] i_CTL_wb_reg_write_src,
+
+    input logic [1:0] i_ex_fwd_a, // todo USE
+    input logic [1:0] i_ex_fwd_b, // todo USE
     
-    // Instruction memory interface
+    // imem interface
     input logic [WIDTH-1:0] i_instruction,
     output logic [WIDTH-1:0] o_pc_if,
     
-    // Data memory interface
+    // dmem interface
     output logic [WIDTH-1:0] o_dmem_addr,
     output logic [WIDTH-1:0] o_dmem_write_data,
     output logic [3:0] o_dmem_byteen,
@@ -39,11 +42,7 @@ module pipelined_datapath #(
     input logic [WIDTH-1:0] i_dmem_read_data,
     
     // to CU
-    output logic [6:0] o_if_opcode,
     output logic [6:0] o_id_opcode,
-    output logic [6:0] o_ex_opcode,
-    output logic [6:0] o_mem_opcode,
-    output logic [6:0] o_wb_opcode,
     
     output logic o_branch_taken,
     output logic o_jump_taken,
@@ -112,14 +111,10 @@ module pipelined_datapath #(
     assign o_instruction_mem = exmem_instruction;
     assign o_instruction_wb = memwb_instruction;
     
-    assign o_if_opcode = i_instruction[6:0];
     assign o_id_opcode = ifid_instruction[6:0];
-    assign o_ex_opcode = idex_instruction[6:0];
-    assign o_mem_opcode = exmem_instruction[6:0];
-    assign o_wb_opcode = memwb_instruction[6:0];
     
     assign o_branch_taken = branch_condition_met;
-    assign o_jump_taken = (idex_instruction[6:0] == `OPC_JTYPE) || (idex_instruction[6:0] == `OPC_ITYPE_J);
+    assign o_jump_taken = (idex_instruction[6:0] == `OPC_JTYPE) || (idex_instruction[6:0] == `OPC_ITYPE_J); // unconditional jumps are always taken
     
     // ================================
     // IF PHASE
@@ -218,25 +213,45 @@ module pipelined_datapath #(
     // EX PHASE
     // ================================
     
+    logic [WIDTH-1:0] forward_srcA, forward_srcB;
+    
+    mux4 #(.WIDTH(WIDTH)) MUXForwardA (
+        .signal(i_ex_fwd_a),
+        .d0(idex_reg_data1),
+        .d1(exmem_alu_result), // from MEM stage (alu_result)
+        .d2(reg_write_data),   // from WB stage (regdata)
+        .d3(idex_reg_data1),
+        .out(forward_srcA)
+    );
+    
+    mux4 #(.WIDTH(WIDTH)) MUXForwardB (
+        .signal(i_ex_fwd_b),
+        .d0(idex_reg_data2),
+        .d1(exmem_alu_result), // from MEM stage (alu_result)
+        .d2(reg_write_data),   // from WB stage (regdata)
+        .d3(idex_reg_data2),
+        .out(forward_srcB)
+    );
+    
     mux4 #(.WIDTH(WIDTH)) MUXALUSrcA (
         .signal(i_CTL_ex_alu_src_a),
         .d0(idex_pc),
-        .d1(idex_reg_data1),
+        .d1(forward_srcA),
         .d2(`ZERO),
-        .d3(idex_reg_data1),
+        .d3(forward_srcA),
         .out(alu_srcA)
     );
     
     mux8 #(.WIDTH(WIDTH)) MUXALUSrcB (
         .signal(i_CTL_ex_alu_src_b),
-        .d0(idex_reg_data2),
+        .d0(forward_srcB),
         .d1(32'h4),
         .d2(idex_immediate),
         .d3(idex_immediate << 1),
         .d4(`ZERO),
-        .d5(idex_reg_data2),
-        .d6(idex_reg_data2),
-        .d7(idex_reg_data2),
+        .d5(forward_srcB),
+        .d6(forward_srcB),
+        .d7(forward_srcB),
         .out(alu_srcB)
     );
     
@@ -258,8 +273,8 @@ module pipelined_datapath #(
     );
     
     branch_unit bu (
-        .i_r1(idex_reg_data1),
-        .i_r2(idex_reg_data2),
+        .i_r1(forward_srcA),           // TODO [VERIFY] Use forwarded data for branches
+        .i_r2(forward_srcB),           // TODO [VERIFY] Use forwarded data for branches
         .i_func3(idex_funct3),
         .i_bren(i_CTL_ex_branch_enable),
         .o_taken(branch_condition_met)
@@ -278,7 +293,7 @@ module pipelined_datapath #(
             exmem_pc <= idex_pc;
             exmem_instruction <= idex_instruction;
             exmem_alu_result <= alu_result;
-            exmem_reg_data2 <= idex_reg_data2;
+            exmem_reg_data2 <= forward_srcB;
             exmem_rd <= idex_rd;
             exmem_zero_flag <= alu_zero;
             exmem_funct3 <= idex_funct3;
@@ -341,7 +356,7 @@ module pipelined_datapath #(
     mux8 #(.WIDTH(WIDTH)) MUXRegWrite (
         .signal(i_CTL_wb_reg_write_src),
         .d0(memwb_alu_result),
-        .d1(memwb_mem_data),
+        .d1(memwb_mem_data),      // for loads
         .d2(pc_plus4_wb),         // for jal/jalr
         .d3(lui_immediate),       // lui immediate TODO
         .d4(auipc_result),        // PC+Imm for auipc

@@ -6,11 +6,7 @@ module pipelined_control (
     input logic i_clk,
     input logic i_reset,
 
-    input logic [6:0] i_if_opcode,
     input logic [6:0] i_id_opcode,
-    input logic [6:0] i_ex_opcode,
-    input logic [6:0] i_mem_opcode,
-    input logic [6:0] i_wb_opcode,
     
     input logic i_branch_taken,
     input logic i_jump_taken,
@@ -18,27 +14,33 @@ module pipelined_control (
     input logic i_hazard_stall,
     input logic i_hazard_flush,
     
-    // IF stage
+    // IF
     output logic [1:0] o_CTL_if_pc_sel,
     output logic o_CTL_if_pc_write,
     
-    // ID stage  
+    // ID  
     output logic o_CTL_id_reg_write,
     output logic [1:0] o_CTL_id_reg_write_src,
     
-    // EX stage
+    // EX
     output logic [1:0] o_CTL_ex_alu_src_a,
     output logic [2:0] o_CTL_ex_alu_src_b,
     output aluop_t o_CTL_ex_alu_op,
     output logic o_CTL_ex_branch_enable,
     
-    // MEM stage
+    // MEM
     output logic o_CTL_mem_read,
     output logic o_CTL_mem_write,
     
-    // WB stage
+    // WB
     output logic o_CTL_wb_reg_write,
-    output logic [2:0] o_CTL_wb_reg_write_src
+    output logic [2:0] o_CTL_wb_reg_write_src,
+    
+    // for HDU
+    output logic o_CTL_ex_is_load,
+    
+    // for FWU  
+    output logic o_CTL_mem_reg_write
 );
 
     logic [1:0] if_pc_sel_int;
@@ -76,6 +78,7 @@ module pipelined_control (
         if_pc_write_int = 1'b1;
         
         if (i_branch_taken || i_jump_taken) begin
+            // PCSrc = alu_result
             if_pc_sel_int = 2'b01;
         end
         
@@ -255,5 +258,8 @@ module pipelined_control (
     // WB stage outputs
     assign o_CTL_wb_reg_write = mem_wb_reg_write;
     assign o_CTL_wb_reg_write_src = mem_wb_reg_write_src;
+    
+    assign o_CTL_ex_is_load = id_ex_mem_read;
+    assign o_CTL_mem_reg_write = ex_mem_wb_reg_write;
 
 endmodule
