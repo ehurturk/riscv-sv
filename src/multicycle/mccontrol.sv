@@ -111,6 +111,8 @@ always_comb begin : state_logic
 
         AUIPC:     next_state = ALU_WB;
         LUI:       next_state = FETCH;
+
+        SYSTEM:    next_state = SYSTEM; // enter a TRAP loop
         default:   next_state = FETCH;
     endcase
 end
@@ -245,12 +247,14 @@ always_comb begin : output_logic
         end
         
         SYSTEM: begin
-            // ECALL/EBREAK - NOP for now
-            // In a real implementation, would trap
+            // enters into a TRAP cycle
+            // Debug: print state
+            // TODO remove this
+            $display("In a trap cycle!");
         end
 
         default: begin
-            
+           // do nothing 
         end
 
     endcase

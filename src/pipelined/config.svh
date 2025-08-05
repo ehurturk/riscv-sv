@@ -5,6 +5,6 @@
 // `define USE_STATIC
 `define SHOW_INITIAL_MEMORY
 
-`define PROGRAM_FILE "mem/testadd.hex"
+`define PROGRAM_FILE "mem/test_rv32i.hex"
 
 `endif //CONFIG_H

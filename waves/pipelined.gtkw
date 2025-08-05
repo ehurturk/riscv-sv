@@ -1,0 +1,28 @@
+[*]
+[*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
+[*] Tue Aug  5 21:54:53 2025
+[*]
+[dumpfile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/pipelined.vcd"
+[dumpfile_mtime] "Tue Aug  5 21:38:03 2025"
+[dumpfile_size] 370852
+[savefile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/pipelined.gtkw"
+[timestart] 0
+[size] 1472 891
+[pos] -1 -1
+*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 255
+[signals_width] 304
+[sst_expanded] 1
+[sst_vpaned_height] 259
+@2022
+^1 /Users/emirhurturk/Dev/sysverilog/riscv-core/filters/rv_decoder.pl
+TOP.o_instruction_if[31:0]
+@22
+TOP.o_instruction_id[31:0]
+TOP.o_instruction_ex[31:0]
+TOP.o_instruction_mem[31:0]
+TOP.o_instruction_wb[31:0]
+@28
+TOP.clk
+[pattern_trace] 1
+[pattern_trace] 0
