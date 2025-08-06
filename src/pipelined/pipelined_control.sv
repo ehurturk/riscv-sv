@@ -137,9 +137,9 @@ module pipelined_control (
             end
             
             `OPC_BTYPE: begin                 // Branch instructions
-                ex_alu_src_a_int = 2'b01;     // Register data
-                ex_alu_src_b_int = 3'b000;    // Register data
-                ex_alu_op_int = ALUOP_SUB;
+                ex_alu_src_a_int = 2'b00;     // PC
+                ex_alu_src_b_int = 3'b010;    // Immediate
+                ex_alu_op_int = ALUOP_ADD;    // PC + immediate = branch target
                 ex_branch_enable_int = 1'b1;
                 wb_reg_write_int = 1'b0;       // No writeback
             end

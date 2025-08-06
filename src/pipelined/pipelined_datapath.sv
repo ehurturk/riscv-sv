@@ -8,6 +8,7 @@ module pipelined_datapath #(
 )(
     input logic i_clk,
     input logic i_reset,
+    input logic i_hazard_flush,
     
     input logic [1:0] i_CTL_if_pc_sel,
     input logic i_CTL_if_pc_write,
@@ -149,7 +150,7 @@ module pipelined_datapath #(
     
     // IF/ID pipeline register
     always_ff @(posedge i_clk) begin
-        if (i_reset) begin
+        if (i_reset || i_hazard_flush) begin
             ifid_pc <= `ZERO;
             ifid_instruction <= 32'h00000013; // nop
         end else begin
@@ -184,7 +185,7 @@ module pipelined_datapath #(
     
     
     always_ff @(posedge i_clk) begin
-        if (i_reset) begin
+        if (i_reset || i_hazard_flush) begin
             idex_pc <= `ZERO;
             idex_instruction <= 32'h00000013; // NOP
             idex_reg_data1 <= `ZERO;

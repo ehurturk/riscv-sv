@@ -83,6 +83,7 @@ module riscv_pipelined_core #(
     ) datapath (
         .i_clk(i_clk),
         .i_reset(i_reset),
+        .i_hazard_flush(hazard_flush),
         
         // ctl inputs
         .i_CTL_if_pc_sel(CTL_if_pc_sel),
