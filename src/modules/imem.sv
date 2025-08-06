@@ -1,5 +1,5 @@
 `include "../definitions/defs.svh"
-`include "../multicycle/config.svh"
+`include "../pipelined/config.svh"
 
 module imem #(
   parameter WIDTH = 32,

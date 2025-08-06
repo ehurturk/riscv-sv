@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   std::map<uint32_t, uint32_t> memory_writes;
 
   int cycle = 0;
-  int max_cycles = 200;
+  int max_cycles = 2000;
   uint32_t last_pc_wb = 0;
   int stall_count = 0;
 

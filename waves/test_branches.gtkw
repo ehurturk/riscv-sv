@@ -1,0 +1,38 @@
+[*]
+[*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
+[*] Wed Aug  6 14:50:20 2025
+[*]
+[dumpfile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/pipelined.vcd"
+[dumpfile_mtime] "Wed Aug  6 14:48:28 2025"
+[dumpfile_size] 3522920
+[savefile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/waves/test_branches.gtkw"
+[timestart] 42
+[size] 1472 891
+[pos] -1 -1
+*-4.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.top.
+[treeopen] TOP.top.core.
+[treeopen] TOP.top.core.datapath.
+[sst_width] 255
+[signals_width] 180
+[sst_expanded] 1
+[sst_vpaned_height] 259
+@28
+TOP.clk
+TOP.reset
+@25
+TOP.top.core.datapath.rf.regs[10][31:0]
+TOP.top.core.datapath.rf.regs[11][31:0]
+TOP.top.core.datapath.rf.regs[12][31:0]
+TOP.top.core.datapath.rf.regs[13][31:0]
+TOP.top.core.datapath.rf.regs[14][31:0]
+TOP.top.core.datapath.rf.regs[15][31:0]
+TOP.top.core.datapath.rf.regs[16][31:0]
+TOP.top.core.datapath.rf.regs[17][31:0]
+TOP.top.core.datapath.rf.regs[18][31:0]
+TOP.top.core.datapath.rf.regs[30][31:0]
+@22
+TOP.top.core.datapath.rf.regs[31][31:0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,40 @@
+[*]
+[*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
+[*] Wed Aug  6 20:23:03 2025
+[*]
+[dumpfile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/pipelined.vcd"
+[dumpfile_mtime] "Wed Aug  6 20:12:54 2025"
+[dumpfile_size] 1164654
+[savefile] "/Users/emirhurturk/Dev/sysverilog/riscv-core/waves/branching.gtkw"
+[timestart] 8
+[size] 1248 438
+[pos] 190 150
+*-2.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.top.
+[treeopen] TOP.top.core.
+[sst_width] 255
+[signals_width] 218
+[sst_expanded] 1
+[sst_vpaned_height] 101
+@28
+TOP.clk
+@22
+TOP.o_instruction_if[31:0]
+TOP.o_instruction_id[31:0]
+TOP.o_instruction_ex[31:0]
+TOP.o_instruction_mem[31:0]
+TOP.o_instruction_wb[31:0]
+TOP.o_pc_if[31:0]
+TOP.o_pc_id[31:0]
+TOP.o_pc_ex[31:0]
+TOP.o_pc_mem[31:0]
+TOP.o_pc_wb[31:0]
+@24
+TOP.top.core.datapath.rf.regs[1][31:0]
+TOP.top.core.datapath.rf.regs[2][31:0]
+TOP.top.core.datapath.rf.regs[10][31:0]
+@28
+TOP.top.core.hdu.o_flush
+[pattern_trace] 1
+[pattern_trace] 0
